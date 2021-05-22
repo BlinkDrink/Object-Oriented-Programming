@@ -1,0 +1,5 @@
+VeHicle X1234BB Audi
+PerSon Petko 100
+VeHiCLE X4333BB Audi
+Acquire 100 X1234BB
+REMOVE X4333BB

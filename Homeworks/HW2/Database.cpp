@@ -12,9 +12,11 @@ using std::cin;
 using std::getline;
 using std::invalid_argument;
 using std::exception;
+using  std::out_of_range;
 using std::ifstream;
 using std::ofstream;
 using termcolor::red;
+using termcolor::yellow;
 using termcolor::green;
 using termcolor::reset;
 
@@ -23,14 +25,14 @@ Database::Database() {}
 void Database::printVehicles() const {
 	for (size_t i = 0; i < vehicles.size(); i++)
 	{
-		cout << vehicles[i];
+		cout << yellow << vehicles[i] << reset;
 	}
 }
 
 void Database::printPeople() const {
 	for (size_t i = 0; i < people.size(); i++)
 	{
-		cout << people[i];
+		cout << yellow << people[i] << reset;
 	}
 }
 
@@ -70,11 +72,11 @@ void Database::deletePersonRecord(unsigned int id) {
 		}
 	}
 
-	size_t vehicleNum = people[ind].getVehicleCount();
+	size_t vehicleNum = people[ind].getRegistrationsCount();
 
 	for (size_t i = 0; i < vehicleNum; i++)
 	{
-		releaseVehicleOfOwner(id, people[ind].getRegistrationAtIndex(0));
+		releaseVehicleOfOwner(id, people[ind].getRegistrationAt(0));
 	}
 
 	people.erase(people.begin() + ind);
@@ -166,7 +168,7 @@ void Database::assignVehicleToOwner(unsigned ownerID, const string& vehicleID) {
 		releaseVehicleOfOwner(v->getOwnerID(), v->getRegistration());
 	}
 
-	p->addVehicleRegNum(vehicleID);
+	p->addRegistrationNumber(vehicleID);
 	v->setOwnerId(ownerID);
 }
 
@@ -184,11 +186,11 @@ void Database::releaseVehicleOfOwner(unsigned ownerID, const string& vehicleID) 
 	}
 
 	v->setOwnerId(0);
-	p->removeVehicleRegNum(vehicleID);
+	p->removeRegistrationNumber(vehicleID);
 }
 
 void Database::readFromFile(const string& path, vector<string>& cmdHistory) {
-	if (path == "\0")
+	if (!path.size())
 	{
 		throw invalid_argument("Invalid file name or location.");
 	}
@@ -244,6 +246,11 @@ void Database::readFromFile(const string& path, vector<string>& cmdHistory) {
 }
 
 void Database::saveToFile(const string& path, const vector<string>& cmdHistory) const {
+	if (!path.size())
+	{
+		throw invalid_argument("Invalid file name or location.");
+	}
+
 	ofstream out(path);
 	if (!out)
 	{
@@ -319,6 +326,11 @@ void Database::exe() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
+			catch (const out_of_range& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
 
 			cout << green << "Successfuly added vehicle " << cp.atToken(1) << " with description " << cp.atToken(2) << reset << endl;
 			commandsHistory.push_back(cp.getRaw());
@@ -328,13 +340,18 @@ void Database::exe() {
 			{
 				if (atoi(cp.atToken(2).c_str()) == 0)
 				{
-					cout << red << "Invalid person id." << reset;
+					cout << red << "Invalid person id." << reset << endl;
 					break;
 				}
 
 				addPersonRecord(cp.atToken(1), atoi(cp.atToken(2).c_str()));
 			}
 			catch (const invalid_argument& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+			catch (const out_of_range& e)
 			{
 				cout << red << e.what() << reset << endl;
 				break;
@@ -353,6 +370,11 @@ void Database::exe() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
+			catch (const out_of_range& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
 
 			cout << green << "Person with id " << cp.atToken(1) << " successfuly acquired vehicle with registration " << cp.atToken(2) << reset << endl;
 			commandsHistory.push_back(cp.getRaw());
@@ -363,6 +385,11 @@ void Database::exe() {
 				releaseVehicleOfOwner(atoi(cp.atToken(1).c_str()), cp.atToken(2));
 			}
 			catch (const invalid_argument& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+			catch (const out_of_range& e)
 			{
 				cout << red << e.what() << reset << endl;
 				break;
@@ -379,7 +406,7 @@ void Database::exe() {
 					Person* p = findPersonById(atoi(cp.atToken(1).c_str()));
 					if (p != nullptr)
 					{
-						if (p->getVehicleCount() != 0)
+						if (p->getRegistrationsCount() != 0)
 						{
 							char answer;
 							cout << "Are you sure you want to delete this record?(y/n) ";
@@ -436,6 +463,11 @@ void Database::exe() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
+			catch (const out_of_range& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
 
 			cout << green << "Successfully removed record with id " << cp.atToken(1) << reset << endl;
 			commandsHistory.push_back(cp.getRaw());
@@ -447,6 +479,11 @@ void Database::exe() {
 				saveToFile(cp.atToken(1), commandsHistory);
 			}
 			catch (const invalid_argument& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+			catch (const out_of_range& e)
 			{
 				cout << red << e.what() << reset << endl;
 				break;
@@ -495,6 +532,12 @@ void Database::exe() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
+			catch (const out_of_range& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+
 			break;
 		case EXIT:
 			break;

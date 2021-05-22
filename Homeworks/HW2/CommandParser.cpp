@@ -4,6 +4,7 @@
 using std::cin;
 using std::getline;
 using std::invalid_argument;
+using std::out_of_range;
 
 CommandParser::CommandParser() {
 }
@@ -17,47 +18,6 @@ void CommandParser::tokenizeInnerString() {
 	size_t tokensWordInd = 0;
 	size_t numWhiteSpaces = 0;
 	size_t i = 0;
-
-
-	/*for (size_t i = 0; i < raw.size(); i++)
-	{
-		if (i == 0)
-		{
-			while (raw[i] == ' ')
-			{
-				i++;
-				tokensWordInd++;
-			}
-		}
-
-		if (raw[i] == '"')
-		{
-			tokensWordInd = i + 1;
-			i++;
-			while (raw[i] != '"')
-			{
-				i++;
-			}
-			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd));
-			tokensWordInd = i + 1;
-		}
-		else if (raw[i] == ' ')
-		{
-			while (raw[i] == ' ')
-			{
-				i++;
-				numWhiteSpaces++;
-			}
-			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd - numWhiteSpaces));
-			tokensWordInd = i;
-			numWhiteSpaces = 0;
-			i--;
-		}
-		else if (i == (raw.size() - 1))
-		{
-			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd + 1));
-		}
-	}*/
 
 	while (raw[i])
 	{
@@ -82,7 +42,7 @@ void CommandParser::tokenizeInnerString() {
 		else
 		{
 			tokensWordInd = i;
-			while (isalpha(raw[i]) | isdigit(raw[i]))
+			while (isalpha(raw[i]) | isdigit(raw[i]) || raw[i] == '.' || raw[i] == '\\' || raw[i] == '/')
 			{
 				i++;
 			}
@@ -96,11 +56,11 @@ void CommandParser::readCmd() {
 }
 
 void CommandParser::toUpper(string& str) {
-	for (size_t i = 0; i < tokens[0].size(); i++)
+	for (size_t i = 0; i < str.size(); i++)
 	{
-		if (tokens[0][i] >= 'a' && tokens[0][i] <= 'z')
+		if (str[i] >= 'a' && str[i] <= 'z')
 		{
-			tokens[0][i] -= 'a' - 'A';
+			str[i] -= 'a' - 'A';
 		}
 	}
 }
@@ -112,7 +72,7 @@ void CommandParser::cmdToUpper() {
 const string& CommandParser::atToken(size_t pos) const {
 	if (pos >= tokens.size())
 	{
-		throw invalid_argument("Command out of range. There are not enough arguments.");
+		throw out_of_range("Command out of range. There are not enough arguments.");
 	}
 
 	return tokens[pos];
@@ -160,8 +120,12 @@ CommandType CommandParser::getCommandType() const {
 	{
 		return SHOW;
 	}
-	else {
+	else if (tokens[0] == "EXIT") {
 		return EXIT;
+	}
+	else
+	{
+		return NOCOMMAND;
 	}
 }
 

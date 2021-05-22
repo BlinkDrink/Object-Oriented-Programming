@@ -16,30 +16,32 @@ private:
 	bool isRegValid(const string& s);
 public:
 	/**
-	*	Constructor with const char * argument.
 	*	Initialized registration number with the given str.
 	*	Throws if str is invalid reg number.
+	*
+	*	@param str - string to be initialized with
 	*/
 	Registration(const string& str);
 
 	/**
-	*	Assignment operator, used to copy contents of str into the current
+	*	Assignment operator, copies contents of reg into the current
 	*	object.
 	*
 	*	@param str - string to be copied
 	*/
-	Registration& operator=(const Registration& str);
+	Registration& operator=(const Registration& reg);
 
 	/**
-	*	Operator== used to compare two strings.
+	*	Compares two strings.
 	*
 	*	@param reg - registration to be compared with
+	*
+	*	returns true if strings are equal, false otherwise
 	*/
 	bool operator==(const Registration& reg) const;
 
 	/**
-	*	Class method, returns pointer to the string holding the
-	*	registration number inside the object.
+	*	returns reg string
 	*/
 	const string& toString() const;
 };
