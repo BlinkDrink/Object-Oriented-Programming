@@ -537,7 +537,6 @@ void Database::exe() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
-
 			break;
 		case EXIT:
 			break;
