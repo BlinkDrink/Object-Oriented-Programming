@@ -8,6 +8,8 @@ class Table {
 private:
 	vector<vector<Cell>> m_cells;
 public:
+	Table(size_t rows, size_t cols);
+
 	/*
 	*	@brief Prints the table on the console
 	*/
@@ -19,7 +21,7 @@ public:
 	*	@param row - row index
 	*	@param col - col index
 	*/
-	void addCellAt(size_t row, size_t col, Type* item);
+	void addCellAt(size_t row, size_t col, const Cell& cell);
 
 	/*
 	*	@brief Expands the table to the given row and col

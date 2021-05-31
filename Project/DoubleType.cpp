@@ -3,6 +3,10 @@
 
 using std::cout;
 
+DoubleType::DoubleType(double real, Sign sign) : m_real(real), m_sign(sign) {
+
+}
+
 void DoubleType::print() const {
 	char sign = (int)m_sign != 0 ? (int)m_sign != 1 ? ' ' : '-' : '+';
 	cout << sign << m_real;
@@ -29,4 +33,9 @@ DataType DoubleType::getType() const {
 
 void DoubleType::setType(DataType type) {
 	m_type = type;
+}
+
+DoubleType* DoubleType::clone() const
+{
+	return new DoubleType(*this);
 }

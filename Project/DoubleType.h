@@ -6,11 +6,13 @@ private:
 	double m_real;
 	Sign m_sign;
 public:
+	DoubleType(double real, Sign sign);
 	void print() const override;
 	DataType getType() const override;
 	void setType(DataType type) override;
+	virtual DoubleType* clone() const override;
 
-	void setNumber(double value);
 	double getNumber() const;
+	void setNumber(double value);
 };
 

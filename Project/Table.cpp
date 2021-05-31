@@ -2,6 +2,18 @@
 
 using std::cout;
 
+Table::Table(size_t rows, size_t cols) {
+	for (size_t i = 0; i < rows; i++)
+	{
+		vector<Cell> newRow;
+		for (size_t j = 0; j < cols; j++)
+		{
+			newRow.push_back(Cell(nullptr));
+		}
+		m_cells.push_back(newRow);
+	}
+}
+
 void Table::print() const {
 	for (size_t i = 0; i < m_cells.size(); i++)
 	{
@@ -12,19 +24,13 @@ void Table::print() const {
 	}
 }
 
-void Table::addCellAt(size_t row, size_t col, Type* item) {
+void Table::addCellAt(size_t row, size_t col, const Cell& cell) {
 	if (row >= getRows() || col >= getMaxCol())
 	{
 		expand(row, col);
 	}
 
-	switch (m_cells[row][col])
-	{
-	default:
-		break;
-	}
-
-	m_cells[row][col];
+	m_cells[row][col] = cell;
 }
 
 size_t Table::getRows() const {
@@ -44,7 +50,16 @@ size_t Table::getMaxCol() const {
 }
 
 void Table::expand(size_t row, size_t col) {
+	for (size_t i = 0; i < row - getRows() + 1; i++)
+	{
+		vector<Cell> newRow;
 
+		for (size_t j = 0; j < col - m_cells[i].size() + 1; j++)
+		{
+			newRow.push_back(Cell(nullptr));
+		}
+		m_cells.push_back(newRow);
+	}
 }
 
 Table::~Table() {

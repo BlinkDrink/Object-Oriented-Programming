@@ -1,5 +1,7 @@
 #include "CommandParser.h"
 #include "DocumentHandler.h"
+#include "IntegerType.h"
+#include "DoubleType.h"
 #include "Table.h"
 #include<iostream>
 #include<fstream>
@@ -52,8 +54,10 @@ int main() {
 	//	}
 	//}
 
-	Table t;
-
+	Table t(2, 2);
+	t.addCellAt(2, 3, Cell(new IntegerType(13, Sign::PLUS)));
+	t.addCellAt(0, 0, Cell(new DoubleType(-423.23, Sign::MINUS)));
+	t.print();
 
 	return 0;
 }
