@@ -1,21 +1,20 @@
-#pragma once
-#include <iostream>
-#include <vector>
-#include "./Cell.h"
-#include <string>
+#include<iostream>
+#include<vector>
+#include "Cell.h"
+#include<string>
 
 using std::vector;
+using std::string;
 
-class Table
-{
+class Table {
 private:
 	vector<vector<Cell>> m_cells;
 	size_t m_rows;
 	size_t m_cols;
 
-	std::string getStringFilledWithSpaces(size_t num_of_spaces) const;
+	string getStringFilledWithSpaces(size_t num_of_spaces) const;
 	size_t getLongestContentAtCol(size_t col) const;
-
+	vector<int> getLongestWordPerCol() const;
 public:
 	Table(size_t rows, size_t cols);
 
@@ -30,7 +29,7 @@ public:
 	*	@param row - row index
 	*	@param col - col index
 	*/
-	void addCellAt(size_t row, size_t col, const Cell &cell);
+	void setCellAt(size_t row, size_t col, const Cell& cell);
 
 	/*
 	*	@brief Expands the table to the given row
@@ -56,7 +55,7 @@ public:
 	*/
 	size_t getMaxCol() const;
 
-	void updateCell(size_t row, size_t col, const Cell &cell);
 
 	~Table();
 };
+

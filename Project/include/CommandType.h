@@ -1,6 +1,4 @@
-#pragma once
-enum class CommandType
-{
+enum class CommandType {
 	OPEN,
 	CLOSE,
 	NEW,

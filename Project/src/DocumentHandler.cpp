@@ -1,18 +1,16 @@
-#include <iostream>
-#include <string>
-#include "../include/DocumentHandler.h"
+#include "DocumentHandler.h"
+#include<string>
+#include<iostream>
 
-using std::cin;
 using std::cout;
-using std::invalid_argument;
+using std::cin;
 using std::string;
+using std::invalid_argument;
 
-DocumentHandler::DocumentHandler() : isSaved(false)
-{
+DocumentHandler::DocumentHandler() : isSaved(false) {
 }
 
-void DocumentHandler::openFile(const string &path)
-{
+void DocumentHandler::openFile(const string& path) {
 	reader.open(path);
 
 	if (!reader.is_open())
@@ -28,8 +26,7 @@ void DocumentHandler::openFile(const string &path)
 	}
 }
 
-void DocumentHandler::closeFile()
-{
+void DocumentHandler::closeFile() {
 	if (writer.is_open())
 	{
 		if (!isSaved)
@@ -43,12 +40,10 @@ void DocumentHandler::closeFile()
 				{
 					saveToFile();
 				}
-				else if (choice == 'd')
-				{
+				else if (choice == 'd') {
 					writer.close();
 				}
-				else if (choice == 'c')
-				{
+				else if (choice == 'c') {
 					break;
 				}
 				else
@@ -64,8 +59,7 @@ void DocumentHandler::closeFile()
 	}
 }
 
-void DocumentHandler::saveToFile()
-{
+void DocumentHandler::saveToFile() {
 	if (!writer.is_open())
 	{
 		throw invalid_argument("Currently there is no file linked to this document.");
@@ -76,8 +70,7 @@ void DocumentHandler::saveToFile()
 	isSaved = true;
 }
 
-DocumentHandler::~DocumentHandler()
-{
+DocumentHandler::~DocumentHandler() {
 	if (reader.is_open())
 	{
 		reader.close();

@@ -1,33 +1,31 @@
-#include <iostream>
-#include "../include/Cell.h"
-#include "../include/DoubleType.h"
-#include "../include/IntegerType.h"
+#include "Cell.h"
+#include<iostream>
+#include "DoubleType.h"
+#include "IntegerType.h"
 
 using std::cout;
 
-Cell::Cell(Type *content) : m_content(content)
-{
+Cell::Cell(Type* content) :m_content(content) {
 }
 
-void Cell::copyFrom(const Cell &other)
-{
+void Cell::copyFrom(const Cell& other) {
 	if (other.m_content != nullptr)
 		m_content = other.m_content->clone();
 	else
 		m_content = nullptr;
 }
 
-Cell::Cell(const Cell &other)
+Cell::Cell(const Cell& other)
 {
 	copyFrom(other);
 	//m_content->setType(cell.getCellType());
 }
 
-Cell &Cell::operator=(const Cell &other)
+Cell& Cell::operator=(const Cell& other)
 {
 	if (this != &other)
 	{
-		Type *t = other.m_content->clone();
+		Type* t = other.m_content->clone();
 		delete m_content;
 		m_content = t;
 	}
@@ -35,13 +33,13 @@ Cell &Cell::operator=(const Cell &other)
 	return *this;
 }
 
-Cell::Cell(Cell &&other) noexcept
+Cell::Cell(Cell&& other) noexcept
 {
 	m_content = other.m_content;
 	other.m_content = nullptr;
 }
 
-Cell &Cell::operator=(Cell &&other) noexcept
+Cell& Cell::operator=(Cell&& other) noexcept
 {
 	if (this != &other)
 	{
@@ -53,25 +51,22 @@ Cell &Cell::operator=(Cell &&other) noexcept
 	return *this;
 }
 
-void Cell::print() const
-{
+void Cell::print() const {
 	if (m_content == nullptr)
 		cout << "";
 	else
 		m_content->print();
 }
 
-DataType Cell::getCellType() const
-{
+DataType Cell::getCellType() const {
 	return m_content->getType();
 }
 
-Type *Cell::getContent() const
-{
+Type* Cell::getContent() const {
 	return m_content;
 }
 
-Cell::~Cell()
-{
+
+Cell::~Cell() {
 	delete m_content;
 }

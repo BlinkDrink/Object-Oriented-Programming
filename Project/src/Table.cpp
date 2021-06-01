@@ -1,16 +1,14 @@
-#include "../include/Table.h"
-#include "../include/DoubleType.h"
-#include "../include/IntegerType.h"
-#include <string>
+#include "Table.h"
+#include "DoubleType.h"
+#include "IntegerType.h"
+#include<string>
 
-using std::cout;
-
-using std::invalid_argument;
 using std::string;
 using std::to_string;
+using std::cout;
+using std::invalid_argument;
 
-Table::Table(size_t rows, size_t cols)
-{
+Table::Table(size_t rows, size_t cols) {
 	for (size_t i = 0; i < rows; i++)
 	{
 		vector<Cell> newRow;
@@ -25,8 +23,7 @@ Table::Table(size_t rows, size_t cols)
 	m_cols = cols;
 }
 
-string Table::getStringFilledWithSpaces(size_t num_of_spaces) const
-{
+string Table::getStringFilledWithSpaces(size_t num_of_spaces) const {
 	string s;
 	for (size_t i = 0; i < num_of_spaces; i++)
 	{
@@ -35,29 +32,74 @@ string Table::getStringFilledWithSpaces(size_t num_of_spaces) const
 	return s;
 }
 
-void Table::print() const
-{
+vector<int> Table::getLongestWordPerCol() const {
+	vector<int> lengthPerCol;
+
 	for (size_t i = 0; i < m_cols; i++)
 	{
-		size_t longestContent = getLongestContentAtCol(i);
-		if (i == 0)
-		{
-			//string spaces = getStringFilledWithSpaces(longestContent - 1);
-			char colName = i + 65;
-			cout << "  |" << colName << /*spaces*/ '|';
-		}
+		lengthPerCol.push_back(getLongestContentAtCol(i));
+	}
 
-		for (size_t j = 0; j < m_rows; j++)
+	return lengthPerCol;
+}
+
+void Table::print() const {
+	vector<int> longestWordsPerCol = getLongestWordPerCol();
+
+	size_t rowsLen = strlen(to_string(m_rows).c_str());
+	string leadingSpace = getStringFilledWithSpaces(rowsLen);
+	cout << leadingSpace;
+	for (size_t i = 0; i < m_cols; i++)
+	{
+		string spaces = getStringFilledWithSpaces(longestWordsPerCol[i]);
+		cout << " | " << (char)(i + 65) << spaces;
+	}
+
+	cout << " |\n";
+
+	for (size_t i = 0; i < m_rows; i++)
+	{
+		string spacesForNumbersCol = getStringFilledWithSpaces(rowsLen - strlen(to_string(i + 1).c_str()));
+		cout << i + 1 << spacesForNumbersCol << " | ";
+		for (size_t j = 0; j < m_cols; j++)
 		{
-			cout << j + 1 << "  |";
-			m_cells[i][j].print();
-			cout << '|';
+			if (m_cells[i][j].getContent() != nullptr)
+			{
+				if (m_cells[i][j].getCellType() == DataType::DOUBLE)
+				{
+					DoubleType* dt = dynamic_cast<DoubleType*>(m_cells[i][j].getContent());
+
+					string doubleAsString = to_string(dt->getNumber());
+					string spaces = getStringFilledWithSpaces(longestWordsPerCol[j] - doubleAsString.size());
+					dt->print();
+					cout << spaces << " | ";
+				}
+				else if (m_cells[i][j].getCellType() == DataType::INTEGER)
+				{
+					IntegerType* it = dynamic_cast<IntegerType*>(m_cells[i][j].getContent());
+
+					string integerAsString = to_string(it->getNumber());
+					string spaces = getStringFilledWithSpaces(longestWordsPerCol[j] - integerAsString.size());
+					it->print();
+					cout << spaces << " | ";
+				}
+			}
+			else
+			{
+				string spaces = getStringFilledWithSpaces(longestWordsPerCol[j]);
+				cout << spaces << "  | ";
+			}
 		}
+		cout << '\n';
 	}
 }
 
-void Table::addCellAt(size_t row, size_t col, const Cell &cell)
-{
+void Table::setCellAt(size_t row, size_t col, const Cell& cell) {
+	if (col >= 26)
+	{
+		throw invalid_argument("Columns cannot exceed 25");
+	}
+
 	if (row >= m_rows)
 	{
 		expandRows(row);
@@ -71,23 +113,11 @@ void Table::addCellAt(size_t row, size_t col, const Cell &cell)
 	m_cells[row][col] = cell;
 }
 
-void Table::updateCell(size_t row, size_t col, const Cell &cell)
-{
-	if (row >= m_rows || col >= m_cols)
-	{
-		throw invalid_argument("Invalid indexes.");
-	}
-
-	m_cells[row][col] = cell;
-}
-
-size_t Table::getRows() const
-{
+size_t Table::getRows() const {
 	return m_cells.size();
 }
 
-size_t Table::getMaxCol() const
-{
+size_t Table::getMaxCol() const {
 	size_t maxCol = 0;
 	for (size_t i = 0; i < m_rows; i++)
 	{
@@ -99,8 +129,7 @@ size_t Table::getMaxCol() const
 	return maxCol;
 }
 
-void Table::expandRows(size_t row)
-{
+void Table::expandRows(size_t row) {
 	size_t rowsToAdd = m_rows <= row ? row - m_rows : 0;
 	for (size_t i = 0; i < rowsToAdd + 1; i++)
 	{
@@ -110,8 +139,7 @@ void Table::expandRows(size_t row)
 	}
 }
 
-void Table::expandCols(size_t col)
-{
+void Table::expandCols(size_t col) {
 	for (size_t i = 0; i < m_rows; i++)
 	{
 		while (m_cells[i].size() != col + 1)
@@ -123,54 +151,37 @@ void Table::expandCols(size_t col)
 	m_cols = col + 1;
 }
 
-size_t Table::getLongestContentAtCol(size_t col) const
-{
+size_t Table::getLongestContentAtCol(size_t col) const {
 	size_t longest = 0;
+
 	for (size_t i = 0; i < m_rows; i++)
 	{
-		if (m_cells[i][col].getCellType() == DataType::DOUBLE)
+		if (m_cells[i][col].getContent() != nullptr)
 		{
-			DoubleType *dt = (DoubleType *)m_cells[i][col].getContent();
-
-			string doubleAsString = to_string(dt->getNumber());
-			if (longest < doubleAsString.size())
+			if (m_cells[i][col].getCellType() == DataType::DOUBLE)
 			{
-				longest = doubleAsString.size();
+				DoubleType* dt = dynamic_cast<DoubleType*>(m_cells[i][col].getContent());
+				string doubleAsString((to_string(abs(dt->getNumber()))));
+
+				if (longest < doubleAsString.size())
+				{
+					longest = doubleAsString.size();
+				}
+			}
+			else if (m_cells[i][col].getCellType() == DataType::INTEGER)
+			{
+				IntegerType* it = dynamic_cast<IntegerType*>(m_cells[i][col].getContent());
+
+				string integerAsString = to_string(it->getNumber());
+				if (longest < integerAsString.size())
+				{
+					longest = integerAsString.size();
+				}
 			}
 		}
-		else if (typeid(m_cells[i][col].getContent()) == typeid(IntegerType))
-		{
-			cout << 'h';
-		}
 	}
+
 	return longest;
 }
-
-//void Table::expand(size_t row, size_t col) {
-//	for (size_t i = 0; i < m_rows; i++)
-//	{
-//		size_t currentCols = m_cells[i].size() - 1;
-//		size_t colsToAdd = currentCols <= col ? col - currentCols : 0;
-//		for (size_t j = 0; j < colsToAdd; j++)
-//		{
-//			m_cells[i].push_back(Cell(nullptr));
-//		}
-//	}
-//
-//	size_t rowsToAdd = m_rows <= row ? row - m_rows : 0;
-//	for (size_t i = 0; i < rowsToAdd + 1; i++)
-//	{
-//		vector<Cell> newRow;
-//
-//		for (size_t j = 0; j < col + 1; j++)
-//		{
-//			newRow.push_back(Cell(nullptr));
-//		}
-//		m_cells.push_back(newRow);
-//	}
-//
-//	m_rows = m_cells.size();
-//	m_cols = getMaxCol();
-//}
 
 Table::~Table() {}
