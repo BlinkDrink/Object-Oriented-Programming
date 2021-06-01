@@ -1,15 +1,17 @@
 #pragma once
-#include<string>
-#include<vector>
-#include "CommandType.h"
+#include <string>
+#include <vector>
+#include "./CommandType.h"
 
 using std::string;
 using std::vector;
 
-class CommandParser {
+class CommandParser
+{
 private:
 	string raw;
 	vector<string> tokens;
+
 public:
 	/**
 	*	Default constructor
@@ -22,7 +24,7 @@ public:
 	*
 	*	@param str - string to initialize raw with
 	*/
-	CommandParser(const string& str);
+	CommandParser(const string &str);
 
 	/**
 	*	Populates raw using std::getline()
@@ -39,13 +41,13 @@ public:
 	*
 	*	@param str - string to be Uppered
 	*/
-	const string toUpper(const string& str) const;
+	const string toUpper(const string &str) const;
 
 	/**
 	*	Getter
 	*	returns raw string
 	*/
-	string& getRaw();
+	string &getRaw();
 
 	/**
 	*	Getter
@@ -61,7 +63,7 @@ public:
 	*	@param pos - index to be accessed
 	*	returns the element at index pos
 	*/
-	const string& atToken(size_t pos) const;
+	const string &atToken(size_t pos) const;
 
 	/**
 	*	Clears raw    - leaves it empty
