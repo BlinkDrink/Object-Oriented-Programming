@@ -4,6 +4,8 @@
 #include "DocumentHandler.h"
 #include "IntegerType.h"
 #include "DoubleType.h"
+#include "StringType.h"
+#include "FormulaType.h"
 #include "Table.h"
 #include "FormulaType.h"
 
@@ -21,7 +23,6 @@ void menu() {
 }
 
 int main() {
-	//ifstream file;
 	//DocumentHandler fh;
 
 	//while (true)
@@ -49,6 +50,7 @@ int main() {
 	//		//TODO: Implement SaveAs
 	//		break;
 	//	case CommandType::EXIT:
+	//		cout << "Exiting the program...";
 	//		return 0;
 	//	default:
 	//		break;
@@ -58,14 +60,20 @@ int main() {
 	Table t(2, 2);
 	t.setCellAt(0, 0, Cell(new IntegerType(13, Sign::PLUS)));
 	t.setCellAt(0, 1, Cell(new DoubleType(423.23, Sign::MINUS)));
-	t.setCellAt(1, 1, Cell(new DoubleType(54312.24, Sign::PLUS)));
+	t.setCellAt(2, 1, Cell(new DoubleType(3.5, Sign::MINUS)));
+	t.setCellAt(2, 2, Cell(new DoubleType(3000.41259120, Sign::MINUS)));
+	t.setCellAt(1, 1, Cell(new FormulaType("=14 + 15 + 24 / 3 * 0.5 - 200 + 1024 / 2")));
 	t.setCellAt(1, 0, Cell(new IntegerType(25, Sign::PLUS)));
-	t.setCellAt(12, 3, Cell(new IntegerType(100, Sign::PLUS)));
-	t.setCellAt(100, 16, Cell(new IntegerType(100, Sign::PLUS)));
+	t.setCellAt(2, 3, Cell(new StringType("\"Quoted\"")));
+	t.setCellAt(4, 3, Cell(new IntegerType(100, Sign::PLUS)));
+	t.setCellAt(1, 5, Cell(new StringType("abc")));
+	t.setCellAt(2, 5, Cell(new FormulaType("=2 + 2 - 2 - 4 + 2")));
+	t.setCellAt(3, 5, Cell(new FormulaType("=12 * 12 - 12 * 12")));
+	t.setCellAt(4, 5, Cell(new StringType("\"\"Not so Quoted\"\"")));
+	t.setCellAt(5, 5, Cell(new StringType("\"\"Not so Quoted\"\"")));
+	t.setCellAt(5, 5, Cell(new IntegerType(15, Sign::NONE)));
 
 	t.print();
 
-	/*FormulaType f("=432 - 2 + 24 * 4 * 3 + 12 / 4 / 6");
-	double res = f.calculateFormula();*/
 	return 0;
 }

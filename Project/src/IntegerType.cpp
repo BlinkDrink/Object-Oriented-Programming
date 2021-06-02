@@ -1,7 +1,10 @@
 ﻿#include "IntegerType.h"
 #include<iostream>
+#include<string>
 
 using std::cout;
+using std::string;
+using std::to_string;
 
 IntegerType::IntegerType(long long value, Sign s) {
 	m_integer = value;
@@ -9,7 +12,16 @@ IntegerType::IntegerType(long long value, Sign s) {
 }
 
 void IntegerType::print() const {
-	char sign = (int)m_sign != 0 ? (int)m_sign != 1 ? ' ' : '-' : '+';
+	string sign;
+	if (m_sign == Sign::PLUS)
+	{
+		sign = '+';
+	}
+	else if (m_sign == Sign::MINUS)
+	{
+		sign = '-';
+	}
+
 	cout << sign << m_integer;
 }
 
@@ -32,11 +44,28 @@ long long IntegerType::getNumber() const {
 	return m_integer;
 }
 
-void IntegerType::setType(DataType type) {
-	m_type = type;
-}
-
 IntegerType* IntegerType::clone() const
 {
 	return new IntegerType(*this);
+}
+
+bool IntegerType::hasSign() const {
+	if (m_sign != Sign::NONE)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+size_t IntegerType::getNumberLength() const {
+	size_t len = 0;
+
+	string integerAsString = to_string(m_integer);
+	if (hasSign())
+		len = integerAsString.size() + 1;
+	else
+		len = integerAsString.size();
+
+	return len;
 }

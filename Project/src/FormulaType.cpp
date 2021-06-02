@@ -3,11 +3,14 @@
 
 using std::cout;
 using std::invalid_argument;
+using std::to_string;
 
 FormulaType::FormulaType(const string& equation) : m_formula(equation) {
 	if (!isFormulaValid()) {
 		throw invalid_argument("Invalid formula.");
 	}
+
+	m_calculated = calculateFormula();
 }
 
 bool FormulaType::isFormulaValid() const {
@@ -107,7 +110,7 @@ bool FormulaType::containsAditionOrSubtraction(const vector<string>& parts) cons
 }
 
 void FormulaType::print() const {
-	cout << m_value;
+	cout << (m_calculated == 0 ? "" : m_calculated > 0 ? "+" : "-") << m_calculated;
 }
 
 Type* FormulaType::clone() const
@@ -118,10 +121,6 @@ Type* FormulaType::clone() const
 DataType FormulaType::getType() const
 {
 	return DataType::FORMULA;
-}
-
-void FormulaType::setType(DataType type)
-{
 }
 
 vector<string> FormulaType::splitBy(string& delimeter) {
@@ -137,4 +136,23 @@ vector<string> FormulaType::splitBy(string& delimeter) {
 	words.push_back(cpy);
 
 	return words;
+}
+
+double FormulaType::getCaluclatedFormula() const {
+	return m_calculated;
+}
+
+size_t FormulaType::getLengthOfNumber() const {
+	size_t calculatedLen = 0;
+	if (abs(m_calculated - (int)m_calculated) == 0)
+		calculatedLen = to_string((int)m_calculated).size();
+	else
+		calculatedLen = to_string(m_calculated).size();
+
+	if (m_calculated != 0)
+	{
+		calculatedLen++;
+	}
+
+	return calculatedLen;
 }

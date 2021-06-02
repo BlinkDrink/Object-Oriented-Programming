@@ -7,7 +7,6 @@ using std::to_string;
 using std::cout;
 
 DoubleType::DoubleType(double real, Sign sign) : m_real(real), m_sign(sign) {
-
 }
 
 void DoubleType::print() const {
@@ -36,11 +35,33 @@ DataType DoubleType::getType() const {
 	return DataType::DOUBLE;
 }
 
-void DoubleType::setType(DataType type) {
-	m_type = type;
-}
-
 DoubleType* DoubleType::clone() const
 {
 	return new DoubleType(*this);
 }
+
+bool DoubleType::hasSign() const {
+	if (m_sign != Sign::NONE)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+size_t DoubleType::getDoubleLength() const {
+	size_t len = 0;
+	string doubleAsString((to_string(m_real)));
+
+	if (hasSign())
+		len = doubleAsString.size() + 1;
+	else
+		len = doubleAsString.size();
+
+	return len;
+}
+
+string DoubleType::getRawData() const {
+	return m_data;
+}
+

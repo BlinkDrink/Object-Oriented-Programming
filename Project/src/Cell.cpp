@@ -18,7 +18,6 @@ void Cell::copyFrom(const Cell& other) {
 Cell::Cell(const Cell& other)
 {
 	copyFrom(other);
-	//m_content->setType(cell.getCellType());
 }
 
 Cell& Cell::operator=(const Cell& other)
