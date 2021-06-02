@@ -1,12 +1,15 @@
 #pragma once
 #include "DataType.h"
 
+/*
+*	@brief Abstract class, used for interface purposes only
+*/
 class Type {
 protected:
-	DataType m_type;
+	string m_data;
 public:
 	virtual void print() const = 0;
 	virtual Type* clone() const = 0;
 	virtual DataType getType() const = 0;
-	virtual void setType(DataType type) = 0;
+	virtual string getRawData() const = 0;
 };

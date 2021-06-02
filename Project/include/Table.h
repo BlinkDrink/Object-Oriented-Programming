@@ -12,10 +12,34 @@ private:
 	size_t m_rows;
 	size_t m_cols;
 
+	/*
+	*	@brief Fills a string with num_of_spaces whitespaces
+	*
+	*	@param num_of_spaces - number of whitespaces to create
+	*	@returns string filled with white spaces
+	*/
 	string getStringFilledWithSpaces(size_t num_of_spaces) const;
+
+	/*
+	*	@brief Looks up given column to find the longest content
+	*
+	*	@param col - column to check
+	*/
 	size_t getLongestContentAtCol(size_t col) const;
+
+	/*
+	*	@brief Create a vector of int that contains the longest word for each column
+	*
+	*	@returns vector<int> filled with size of longest word for the column
+	*/
 	vector<int> getLongestWordPerCol() const;
 public:
+	/*
+	*	@brief Initializes table size with given rows and cols
+	*
+	*	@param rows - rows to be initialized with
+	*	@param cols - cols to be intiialized with
+	*/
 	Table(size_t rows, size_t cols);
 
 	/*
@@ -24,7 +48,7 @@ public:
 	void print() const;
 
 	/*
-	*	@brief Add a cell at given row and column
+	*	@brief Set a cell at given row and column. Changes entire cell. Expands if row/col is bigger than current
 	*
 	*	@param row - row index
 	*	@param col - col index
@@ -46,16 +70,13 @@ public:
 	void expandCols(size_t col);
 
 	/*
-	*	@returns the number of rows
+	*	@brief Gets current rows of the table
 	*/
 	size_t getRows() const;
 
 	/*
-	*	@returns the size of the longest row of the table
+	*	@brief Gets current columns of the table
 	*/
-	size_t getMaxCol() const;
-
-
-	~Table();
+	size_t getCols() const;
 };
 
