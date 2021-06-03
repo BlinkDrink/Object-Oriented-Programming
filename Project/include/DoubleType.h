@@ -1,18 +1,23 @@
-#include "Type.h"
-#include "Sign.h"
+#pragma once
+#include<iostream>
+#include<string>
+#include "CellType.h"
 
-class DoubleType : public Type {
+class DoubleType : public CellType {
 private:
-	double m_real;
-	Sign m_sign;
+	/*
+	*	@brief Validates whether given string input is valid real number.
+	*
+	*	@returns true if valid, false otherwise
+	*/
+	bool validateData(const string& data) const;
 public:
 	/*
-	*	@brief Initializes DoubleType object with given parameters
+	*	@brief Initializes DoubleType object with given parameter
 	*
-	*	@param real - real number to be initialized with
-	*	@param sign - sign to be initialized with
+	*	@param data - string object with which DoubleType will be initialized
 	*/
-	DoubleType(double real, Sign sign);
+	DoubleType(const string& data);
 
 	/*
 	*	@brief prints m_real and m_sign on the console
@@ -22,7 +27,7 @@ public:
 	/*
 	*	@returns the DataType of the current object
 	*/
-	virtual DataType getType() const override;
+	virtual DataType getDataType() const override;
 
 	/*
 	*	@brief Creates dynamically allocated copy of this object
@@ -32,31 +37,9 @@ public:
 	virtual DoubleType* clone() const override;
 
 	/*
-	*	@brief Getter of m_real
-	*/
-	double getNumber() const;
-
-	/*
-	*	@brief Setter of m_real
-	*/
-	void setNumber(double value);
-
-	/*
-	*	@brief Tells if the number has a sign
-	*/
-	bool hasSign() const;
-
-	/*
 	*	@brief Getter
 	*
-	*	@returns length of m_real
-	*/
-	size_t getDoubleLength() const;
-
-	/*
-	*	@brief Getter
-	*
-	*	@returns raw data to string
+	*	@returns Double to string
 	*/
 	virtual string getRawData() const override;
 };

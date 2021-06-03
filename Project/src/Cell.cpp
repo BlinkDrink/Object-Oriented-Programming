@@ -1,11 +1,9 @@
 #include "Cell.h"
 #include<iostream>
-#include "DoubleType.h"
-#include "IntegerType.h"
 
 using std::cout;
 
-Cell::Cell(Type* content) :m_content(content) {
+Cell::Cell(CellType* content) :m_content(content) {
 }
 
 void Cell::copyFrom(const Cell& other) {
@@ -24,9 +22,17 @@ Cell& Cell::operator=(const Cell& other)
 {
 	if (this != &other)
 	{
-		Type* t = other.m_content->clone();
-		delete m_content;
-		m_content = t;
+		if (other.m_content != nullptr)
+		{
+			CellType* t = other.m_content->clone();
+			delete m_content;
+			m_content = t;
+		}
+		else
+		{
+			delete m_content;
+			m_content = nullptr;
+		}
 	}
 
 	return *this;
@@ -58,13 +64,12 @@ void Cell::print() const {
 }
 
 DataType Cell::getCellType() const {
-	return m_content->getType();
+	return m_content->getDataType();
 }
 
-Type* Cell::getContent() const {
+CellType* Cell::getContent() const {
 	return m_content;
 }
-
 
 Cell::~Cell() {
 	delete m_content;

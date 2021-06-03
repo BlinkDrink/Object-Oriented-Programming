@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 #include<vector>
 #include "Cell.h"
@@ -34,6 +35,8 @@ private:
 	*/
 	vector<int> getLongestWordPerCol() const;
 public:
+	Table();
+
 	/*
 	*	@brief Initializes table size with given rows and cols
 	*

@@ -1,25 +1,47 @@
-#include "FormulaType.h"
 #include<iostream>
+#include "FormulaType.h"
+#include "StringHelper.h"
 
 using std::cout;
 using std::invalid_argument;
 using std::to_string;
 
-FormulaType::FormulaType(const string& equation) : m_formula(equation) {
+FormulaType::FormulaType(const string& equation) {
 	if (!isFormulaValid()) {
 		throw invalid_argument("Invalid formula.");
 	}
 
-	m_calculated = calculateFormula();
+	m_data = equation;
+	m_data = to_string(calculateFormula());
 }
 
 bool FormulaType::isFormulaValid() const {
 	return true;
 }
 
+
+//vector<string> FormulaType::splitBy(string& delimeter) {
+//	vector<string> words;
+//	string cpy = m_data;
+//	cpy.erase(cpy.begin());
+//	size_t pos = 0;
+//
+//	while ((pos = cpy.find(delimeter)) != string::npos) {
+//		words.push_back(cpy.substr(0, pos));
+//		cpy.erase(0, pos + delimeter.length());
+//	}
+//	words.push_back(cpy);
+//
+//	return words;
+//}
+
 double FormulaType::calculateFormula() {
-	string delimeter = " ";
-	vector<string> parts = splitBy(delimeter);
+	StringHelper sh;
+	string cpy = m_data;
+	cpy.erase(cpy.begin());
+
+	sh.trim(cpy);
+	vector<string> parts = sh.splitBy(cpy, " ");
 
 	while (containsMultiplication(parts))
 	{
@@ -110,49 +132,19 @@ bool FormulaType::containsAditionOrSubtraction(const vector<string>& parts) cons
 }
 
 void FormulaType::print() const {
-	cout << (m_calculated == 0 ? "" : m_calculated > 0 ? "+" : "-") << m_calculated;
+	cout << m_data;
 }
 
-Type* FormulaType::clone() const
+FormulaType* FormulaType::clone() const
 {
 	return new FormulaType(*this);
 }
 
-DataType FormulaType::getType() const
+DataType FormulaType::getDataType() const
 {
 	return DataType::FORMULA;
 }
 
-vector<string> FormulaType::splitBy(string& delimeter) {
-	vector<string> words;
-	string cpy = m_formula;
-	cpy.erase(cpy.begin());
-	size_t pos = 0;
-
-	while ((pos = cpy.find(delimeter)) != string::npos) {
-		words.push_back(cpy.substr(0, pos));
-		cpy.erase(0, pos + delimeter.length());
-	}
-	words.push_back(cpy);
-
-	return words;
-}
-
-double FormulaType::getCaluclatedFormula() const {
-	return m_calculated;
-}
-
-size_t FormulaType::getLengthOfNumber() const {
-	size_t calculatedLen = 0;
-	if (abs(m_calculated - (int)m_calculated) == 0)
-		calculatedLen = to_string((int)m_calculated).size();
-	else
-		calculatedLen = to_string(m_calculated).size();
-
-	if (m_calculated != 0)
-	{
-		calculatedLen++;
-	}
-
-	return calculatedLen;
+string FormulaType::getRawData() const {
+	return m_data;
 }

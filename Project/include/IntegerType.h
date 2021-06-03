@@ -1,12 +1,8 @@
 #pragma once
-#include "Type.h"
-#include "Sign.h"
+#include "CellType.h"
 
-class IntegerType : public Type
+class IntegerType : public CellType
 {
-private:
-	long long m_integer;
-	Sign m_sign;
 public:
 	/*
 	*	@brief Initializes IntegerType with given value and sign
@@ -14,7 +10,7 @@ public:
 	*	@param value - value to be initialized with
 	*	@param s	 - sign to be initialized with
 	*/
-	IntegerType(long long value, Sign s);
+	IntegerType(const string& data);
 
 	/*
 	*	@brief prints m_integer and m_sign on the console
@@ -24,7 +20,7 @@ public:
 	/*
 	*	@returns the DataType of the current object
 	*/
-	virtual DataType getType() const override;
+	virtual DataType getDataType() const override;
 
 	/*
 	*	@brief Creates dynamically allocated copy of this object
@@ -34,24 +30,9 @@ public:
 	virtual IntegerType* clone() const override;
 
 	/*
-	*	@brief Getter of the inner number
-	*/
-	long long getNumber() const;
-
-	/*
-	*	@brief Setter of the inner number
-	*/
-	void setNumber(long long value);
-
-	/*
-	*	@brief Tells if the number has a sign
-	*/
-	bool hasSign() const;
-
-	/*
 	*	@brief Getter
 	*
-	*	@returns length of number
+	*	@returns Integer as string
 	*/
-	size_t getNumberLength() const;
+	virtual string getRawData() const override;
 };

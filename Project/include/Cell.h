@@ -1,11 +1,12 @@
-#include "Type.h"
+#pragma once
+#include "CellType.h"
 #include <vector>
 
 using std::vector;
 
 class Cell {
 private:
-	Type* m_content;
+	CellType* m_content;
 
 	/*
 	*	@brief Copies contents from other into the object
@@ -19,7 +20,7 @@ public:
 	*
 	*	@param content - content to assign
 	*/
-	Cell(Type* content);
+	Cell(CellType* content);
 
 	/*
 	*	@brief Copy constructor
@@ -57,7 +58,7 @@ public:
 
 	DataType getCellType() const;
 
-	Type* getContent() const;
+	CellType* getContent() const;
 
 	~Cell();
 };

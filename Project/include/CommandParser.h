@@ -11,63 +11,63 @@ private:
 	string raw;
 	vector<string> tokens;
 public:
-	/**
-	*	Default constructor
+	/*
+	*	@brief Default constructor
 	*/
 	CommandParser();
 
-	/**
-	*	Initializes raw with str.
-	*	Calls tokenizeInnerString on the newly initialized raw.
+	/*
+	*	@brief Initializes raw with str. Calls tokenizeInnerString on the newly initialized raw.
 	*
 	*	@param str - string to initialize raw with
 	*/
 	CommandParser(const string& str);
 
-	/**
-	*	Populates raw using std::getline()
+	/*
+	*	@brief Populates raw using std::getline()
 	*/
 	void readCmd();
 
-	/**
-	*	Splits raw into parts(tokens) and pushes them inside tokens private member.
+	/*
+	*	@brief Splits raw into parts(tokens) and pushes them inside tokens private member.
 	*/
 	void tokenizeInnerString();
 
-	/**
-	*	Converts all small alphabetic characters to capital characters.
+	/*
+	*	@brief Converts all small alphabetic characters to capital characters.
 	*
 	*	@param str - string to be Uppered
 	*/
 	const string toUpper(const string& str) const;
 
-	/**
-	*	Getter
-	*	returns raw string
+	/*
+	*	@brief Getter
+	*	@returns returns raw string
 	*/
 	string& getRaw();
 
-	/**
-	*	Getter
+	/*
+	*	@brief Getter
 	*
-	*	returns size of tokens
+	*	@returns size of tokens
 	*/
 	size_t size() const;
 
-	/**
-	*	Getter
-	*	Throws out_of_range if pos is invalid
+	/*
+	*	@brief Getter. Throws out_of_range if pos is invalid
 	*
 	*	@param pos - index to be accessed
-	*	returns the element at index pos
+	*	@returns the element at index pos
 	*/
 	const string& atToken(size_t pos) const;
 
-	/**
-	*	Clears raw    - leaves it empty
-	*	Clears tokens - leaves it empty
+	/*
+	*	@brief Clears raw, leaves it empty. Clears tokens, leaves it empty
 	*/
 	void clearCmd();
 
+	/*
+	*	@returns the type of the input command
+	*/
 	CommandType getCommandType() const;
 };

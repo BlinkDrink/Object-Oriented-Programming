@@ -1,5 +1,5 @@
-#include "CommandParser.h"
 #include <iostream>
+#include "CommandParser.h"
 
 using std::cin;
 using std::getline;
@@ -103,6 +103,20 @@ CommandType CommandParser::getCommandType() const {
 	{
 		return CommandType::OPEN;
 	}
+	else if (cmd == "PRINT")
+	{
+		return CommandType::PRINT;
+	}
+	else if (cmd == "CLOSE")
+	{
+		return CommandType::CLOSE;
+	}
+	else if (cmd == "EXIT")
+	{
+		return CommandType::EXIT;
+	}
+
+	return CommandType::NOCOMMAND;
 }
 
 void CommandParser::clearCmd() {

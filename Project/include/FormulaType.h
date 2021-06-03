@@ -1,16 +1,13 @@
 #pragma once
-#include "Type.h"
 #include<string>
 #include<vector>
+#include "CellType.h"
 
 using std::string;
 using std::vector;
 
-class FormulaType : public Type {
+class FormulaType : public CellType {
 private:
-	string m_formula;
-	double m_calculated = 0;
-
 	/*
 	*	@brief Splits m_formula string by delimeter and puts the tokens in a vector of strings
 	*
@@ -74,24 +71,17 @@ public:
 	*
 	*	@returns The newly allocated FormulaType* object
 	*/
-	virtual Type* clone() const override;
+	virtual FormulaType* clone() const override;
 
 	/*
 	*	@returns the DataType of the current object
 	*/
-	virtual DataType getType() const override;
+	virtual DataType getDataType() const override;
 
 	/*
 	*	@brief Getter
 	*
-	*	@returns the calculated formula as double
+	*	@returns raw string format of formula after calculation
 	*/
-	double getCaluclatedFormula() const;
-
-	/*
-	*	@brief Gets the length of the calculated number
-	*
-	*	@returns the length of the number
-	*/
-	size_t getLengthOfNumber() const;
+	virtual string getRawData() const override;
 };

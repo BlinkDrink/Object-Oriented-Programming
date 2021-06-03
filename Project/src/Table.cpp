@@ -10,6 +10,7 @@ using std::to_string;
 using std::cout;
 using std::invalid_argument;
 
+Table::Table() :m_rows(0), m_cols(0) {}
 
 string Table::getStringFilledWithSpaces(size_t num_of_spaces) const {
 	string s;
@@ -25,35 +26,11 @@ size_t Table::getLongestContentAtCol(size_t col) const {
 
 	for (size_t i = 0; i < m_rows; i++)
 	{
-		if (m_cells[i][col].getContent() != nullptr)
+		CellType* content = m_cells[i][col].getContent();
+		if (content != nullptr)
 		{
-			if (m_cells[i][col].getCellType() == DataType::DOUBLE)
-			{
-				DoubleType* dt = dynamic_cast<DoubleType*>(m_cells[i][col].getContent());
-
-				if (longest < dt->getDoubleLength())
-					longest = dt->getDoubleLength();
-			}
-			else if (m_cells[i][col].getCellType() == DataType::INTEGER)
-			{
-				IntegerType* it = dynamic_cast<IntegerType*>(m_cells[i][col].getContent());
-
-				if (longest < it->getNumberLength())
-					longest = it->getNumberLength();
-			}
-			else if (m_cells[i][col].getCellType() == DataType::STRING)
-			{
-				StringType* st = dynamic_cast<StringType*>(m_cells[i][col].getContent());
-
-				if (longest < st->getString().size())
-					longest = st->getString().size();
-			}
-			else if (m_cells[i][col].getCellType() == DataType::FORMULA) {
-				FormulaType* ft = dynamic_cast<FormulaType*>(m_cells[i][col].getContent());
-
-				if (longest < ft->getLengthOfNumber())
-					longest = ft->getLengthOfNumber();
-			}
+			if (longest < content->getRawData().size())
+				longest = content->getRawData().size();
 		}
 	}
 
@@ -87,6 +64,10 @@ Table::Table(size_t rows, size_t cols) {
 }
 
 void Table::print() const {
+	if (m_rows == 0 && m_cols == 0)
+	{
+		return;
+	}
 	vector<int> longestWordsPerCol = getLongestWordPerCol();
 
 	size_t rowsLen = strlen(to_string(m_rows).c_str());
@@ -114,9 +95,14 @@ void Table::print() const {
 		cout << i + 1 << spacesForNumbersCol << " | ";
 		for (size_t j = 0; j < m_cols; j++)
 		{
-			if (m_cells[i][j].getContent() != nullptr)
+			CellType* content = m_cells[i][j].getContent();
+			if (content != nullptr)
 			{
-				if (m_cells[i][j].getCellType() == DataType::DOUBLE)
+				string spaces = getStringFilledWithSpaces(longestWordsPerCol[j] - content->getRawData().size());
+				content->print();
+				cout << spaces << " | ";
+
+				/*if (m_cells[i][j].getCellType() == DataType::DOUBLE)
 				{
 					DoubleType* dt = dynamic_cast<DoubleType*>(m_cells[i][j].getContent());
 					if (dt)
@@ -157,7 +143,7 @@ void Table::print() const {
 						ft->print();
 						cout << spaces << " | ";
 					}
-				}
+				}*/
 			}
 			else
 			{

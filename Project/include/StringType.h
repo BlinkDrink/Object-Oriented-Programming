@@ -1,13 +1,11 @@
 #pragma once
-#include "Type.h"
+#include "CellType.h"
 #include<string>
 
 using std::string;
 
-class StringType : public Type
+class StringType : public CellType
 {
-private:
-	string m_string;
 public:
 	/*
 	*	@brief Initializes string
@@ -32,10 +30,12 @@ public:
 	/*
 	*	@returns the DataType of the current object
 	*/
-	virtual DataType getType() const override;
+	virtual DataType getDataType() const override;
 
 	/*
-	*	@brief Getter of m_string
+	*	@brief Getter
+	*
+	*	@returns inner string
 	*/
-	string getString() const;
+	virtual string getRawData() const override;
 };

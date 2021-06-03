@@ -4,12 +4,12 @@
 using std::cout;
 
 StringType::StringType(const string& str) {
-	m_string = str;
+	m_data = str;
 }
 
 void StringType::print() const
 {
-	cout << m_string;
+	cout << m_data;
 }
 
 StringType* StringType::clone() const
@@ -17,11 +17,11 @@ StringType* StringType::clone() const
 	return new StringType(*this);
 }
 
-DataType StringType::getType() const
+DataType StringType::getDataType() const
 {
 	return DataType::STRING;
 }
 
-string StringType::getString() const {
-	return m_string;
+string StringType::getRawData() const {
+	return m_data;
 }
