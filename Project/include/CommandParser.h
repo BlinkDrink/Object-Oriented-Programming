@@ -37,6 +37,7 @@ public:
 	*	@brief Converts all small alphabetic characters to capital characters.
 	*
 	*	@param str - string to be Uppered
+	*	@returns string with all lowercase letters converted to uppercase letters
 	*/
 	const string toUpper(const string& str) const;
 

@@ -4,5 +4,6 @@ enum class DataType {
 	INTEGER,
 	DOUBLE,
 	STRING,
-	FORMULA
+	FORMULA,
+	ERROR
 };

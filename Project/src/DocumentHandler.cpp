@@ -7,12 +7,14 @@
 #include "DoubleType.h"
 #include "FormulaType.h"
 #include "StringType.h"
+#include "ErrorType.h"
 
 using std::cout;
 using std::cin;
 using std::string;
 using std::invalid_argument;
 using std::getline;
+using std::to_string;
 using std::endl;
 
 DocumentHandler::DocumentHandler() : m_isSaved(false) {
@@ -31,7 +33,7 @@ void DocumentHandler::populateTableFromFile() {
 
 	if (!m_reader.is_open())
 	{
-		throw invalid_argument("There is no currently opened file.");
+		throw invalid_argument("There is currently no opened file.");
 	}
 
 	size_t rowsOfFile = 0;
@@ -73,15 +75,23 @@ void DocumentHandler::populateTableFromFile() {
 			}
 			else if (sh.isStringValidFormula(parts[i]))
 			{
+				parts[i].erase(parts[i].begin());
 				m_table.setCellAt(currRow, i, Cell(new FormulaType(parts[i])));
 			}
 			else if (sh.isStringValidString(parts[i]))
 			{
+				sh.removeQuotations(parts[i]);
 				m_table.setCellAt(currRow, i, Cell(new StringType(parts[i])));
 			}
 			else if (parts[i].empty())
 			{
 				m_table.setCellAt(currRow, i, Cell(nullptr));
+			}
+			else
+			{
+				string e("Error: ");
+				e += "row " + to_string(currRow) + ", col " + to_string(i) + ", " + parts[i] + " is unknown data type";
+				throw  invalid_argument(e);
 			}
 		}
 		currRow++;
@@ -99,7 +109,6 @@ void DocumentHandler::openFile(const string& path) {
 	populateTableFromFile();
 
 	m_reader.close();
-
 	m_writer.open(path);
 
 	if (!m_writer.is_open())

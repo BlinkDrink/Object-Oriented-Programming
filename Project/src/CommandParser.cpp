@@ -103,13 +103,29 @@ CommandType CommandParser::getCommandType() const {
 	{
 		return CommandType::OPEN;
 	}
-	else if (cmd == "PRINT")
-	{
-		return CommandType::PRINT;
-	}
 	else if (cmd == "CLOSE")
 	{
 		return CommandType::CLOSE;
+	}
+	else if (cmd == "NEW")
+	{
+		return CommandType::NEW;
+	}
+	else if (cmd == "SAVE")
+	{
+		return CommandType::SAVE;
+	}
+	else if (cmd == "SAVEAS")
+	{
+		return CommandType::SAVEAS;
+	}
+	else if (cmd == "EDIT")
+	{
+		return CommandType::EDIT;
+	}
+	else if (cmd == "PRINT")
+	{
+		return CommandType::PRINT;
 	}
 	else if (cmd == "EXIT")
 	{

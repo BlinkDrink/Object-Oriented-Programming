@@ -13,13 +13,6 @@ private:
 	size_t m_rows;
 	size_t m_cols;
 
-	/*
-	*	@brief Fills a string with num_of_spaces whitespaces
-	*
-	*	@param num_of_spaces - number of whitespaces to create
-	*	@returns string filled with white spaces
-	*/
-	string getStringFilledWithSpaces(size_t num_of_spaces) const;
 
 	/*
 	*	@brief Looks up given column to find the longest content
