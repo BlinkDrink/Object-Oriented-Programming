@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include "termcolor.hpp"
 #include "DocumentHandler.h"
 #include "StringHelper.h"
 #include "CommandParser.h"
@@ -9,10 +10,16 @@
 #include "StringType.h"
 #include "ErrorType.h"
 
+using termcolor::red;
+using termcolor::green;
+using termcolor::yellow;
+using termcolor::reset;
+using termcolor::italic;
 using std::cout;
 using std::cin;
 using std::string;
 using std::invalid_argument;
+using std::out_of_range;
 using std::getline;
 using std::to_string;
 using std::endl;
@@ -66,22 +73,32 @@ void DocumentHandler::populateTableFromFile() {
 		for (size_t i = 0; i < parts.size(); i++)
 		{
 			sh.trim(parts[i]);
-			if (sh.isStringInteger(parts[i])) {
+			if (sh.isStringInteger(parts[i]))
+			{
 				m_table.setCellAt(currRow, i, Cell(new IntegerType(parts[i])));
 			}
 			else if (sh.isStringDouble(parts[i]))
 			{
 				m_table.setCellAt(currRow, i, Cell(new DoubleType(parts[i])));
 			}
-			else if (sh.isStringValidFormula(parts[i]))
-			{
-				parts[i].erase(parts[i].begin());
-				m_table.setCellAt(currRow, i, Cell(new FormulaType(parts[i])));
-			}
+			/*	else if (sh.isStringValidFormula(parts[i]))
+				{
+					parts[i].erase(parts[i].begin());
+					m_table.setCellAt(currRow, i, Cell(new FormulaType(parts[i])));
+				}*/
 			else if (sh.isStringValidString(parts[i]))
 			{
 				sh.removeQuotations(parts[i]);
-				m_table.setCellAt(currRow, i, Cell(new StringType(parts[i])));
+				sh.trim(parts[i]);
+				if (sh.isStringValidFormula(parts[i]))
+				{
+					parts[i].erase(parts[i].begin());
+					m_table.setCellAt(currRow, i, Cell(new FormulaType(parts[i])));
+				}
+				else
+				{
+					m_table.setCellAt(currRow, i, Cell(new StringType(parts[i])));
+				}
 			}
 			else if (parts[i].empty())
 			{
@@ -99,6 +116,11 @@ void DocumentHandler::populateTableFromFile() {
 }
 
 void DocumentHandler::openFile(const string& path) {
+	if (m_writer.is_open())
+	{
+		closeFile();
+	}
+
 	m_reader.open(path);
 
 	if (!m_reader.is_open())
@@ -122,23 +144,23 @@ void DocumentHandler::closeFile() {
 	{
 		if (!m_isSaved)
 		{
-			char choice;
-			cout << "There are unsaved changes. SAVE/DON'T SAVE/CANCEL(s/d/c): ";
-			cin >> choice;
 			while (true)
 			{
+				char choice;
+				cout << "There are unsaved changes. SAVE/DON'T SAVE/CANCEL(s/d/c): ";
+				cin >> choice;
 				if (choice == 's')
 				{
 					saveToFile();
+					cout << green << "File saved." << reset << endl;
+					break;
 				}
 				else if (choice == 'd') {
 					m_writer.close();
-				}
-				else if (choice == 'c') {
+					cout << yellow << "File not saved." << reset << endl;
 					break;
 				}
-				else
-				{
+				else if (choice == 'c') {
 					break;
 				}
 			}
@@ -174,7 +196,7 @@ void DocumentHandler::run() {
 		cp.tokenizeInnerString();
 		if (cp.getRaw().size() == 0 || cp.size() == 0 || cp.size() > 3)
 		{
-			cout << "Invalid command." << endl;
+			cout << red << "Invalid command." << reset << endl;
 			continue;
 		}
 
@@ -189,11 +211,16 @@ void DocumentHandler::run() {
 			}
 			catch (const invalid_argument& e)
 			{
-				cout << e.what() << endl;
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+			catch (const out_of_range& e)
+			{
+				cout << red << e.what() << reset << endl;
 				break;
 			}
 
-			cout << "Successfully opened " << cp.atToken(1) << endl;
+			cout << green << "Successfully opened " << cp.atToken(1) << reset << endl;
 			break;
 		case CommandType::CLOSE:
 
@@ -205,20 +232,28 @@ void DocumentHandler::run() {
 
 			break;
 		case CommandType::SAVEAS:
-
+			break;
 		case CommandType::PRINT:
+			if (m_table.empty())
+			{
+				cout << yellow << "Table is empty." << reset << endl;
+				break;
+			}
+
 			try
 			{
 				m_table.print();
 			}
 			catch (const std::exception& e)
 			{
-				cout << e.what() << endl;
+				cout << red << e.what() << reset << endl;
 			}
 			break;
 		case CommandType::EXIT:
-			cout << "Exiting the program...";
+			cout << termcolor::magenta << "Exiting the program..." << reset << endl;
 			return;
+		case CommandType::NOCOMMAND:
+			cout << red << "Invalid command." << reset << endl;
 		default:
 			break;
 		}
@@ -227,12 +262,8 @@ void DocumentHandler::run() {
 
 DocumentHandler::~DocumentHandler() {
 	if (m_reader.is_open())
-	{
 		m_reader.close();
-	}
 
 	if (m_writer.is_open())
-	{
 		m_writer.close();
-	}
 }

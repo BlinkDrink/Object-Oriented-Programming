@@ -11,17 +11,36 @@ vector<string> StringHelper::splitBy(string source, const string& delimiter) con
 	}
 
 	while ((pos = source.find(delimiter)) != string::npos) {
+		// Check if there is a quote. If so check if it contains a string and extract it
+		size_t quoteOccurence = source.substr(0, pos).find('"');
+		if (quoteOccurence != string::npos)
+		{
+			pos = source.substr(quoteOccurence + 1, source.size() - 1).find('"');
+			size_t findNexDelimiter = source.substr(pos, source.size() - 1).find(delimiter);
+			if (findNexDelimiter == string::npos)
+			{
+				words.push_back(source.substr(0, source.size()));
+				return words;
+			}
+			else
+			{
+				pos = pos + source.substr(pos, source.size() - 1).find(delimiter);
+			}
+		}
+
 		words.push_back(source.substr(0, pos));
 		source.erase(0, pos + delimiter.length());
 
 		if (pos = source.find(delimiter) == string::npos)
 		{
 			words.push_back(source);
+			return words;
 		}
 	}
 
 	return words;
 }
+
 
 bool StringHelper::isStringInteger(const string& source) const {
 	if (source.empty())
@@ -80,51 +99,41 @@ bool StringHelper::isStringDouble(const string& source) const {
 	return true;
 }
 
-//TODO: FIX
 bool StringHelper::isStringValidFormula(const string& source) const {
-	if (source.empty() || source[0] != '=')
-	{
-		return false;
-	}
-
 	string cpy(source);
 	trim(cpy);
-	cpy.erase(cpy.begin());
-	addSpaceInBetweenWords(cpy);
 
+	if (cpy.empty() || cpy[0] != '=')
+		return false;
+
+
+	cpy.erase(cpy.begin());						// Remove '=' and begin checking correctness
+	addSpaceInBetweenWords(cpy);				// Divide words/numbers with spaces so the splitByFunction can catch every element
 	vector<string> parts = splitBy(cpy, " ");
-	removeEmptyStringsInVector(parts);
+	removeEmptyStringsInVector(parts); 			//Remove empty elements
+
+	if (parts.empty())
+		return false;
 
 	// Check first and last symbols to evaluate their correctness
 	if (parts[0] == "/" || parts[0] == "*" || parts[0] == "^" || parts[parts.size() - 1] == "/" || parts[parts.size() - 1] == "*" || parts[parts.size() - 1] == "^" ||
 		parts[parts.size() - 1] == "+" || parts[parts.size() - 1] == "-" || !isValidFormulaMember(parts[0]) || !isValidFormulaMember(parts[parts.size() - 1]))
-	{
 		return false;
-	}
+
 
 	for (size_t i = 1; i < parts.size() - 1; i++)
 	{
 		trim(parts[i]);
 		if (!isValidFormulaMember(parts[i]))
-		{
 			return false;
-		}
+
 
 		if (parts[i] == "+" || parts[i] == "-" || parts[i] == "/" || parts[i] == "*" || parts[i] == "^")
 		{
 			if ((isStringInteger(parts[i - 1]) || isStringDouble(parts[i - 1]) || isStringValidString(parts[i - 1])) && (isStringDouble(parts[i + 1]) || isStringValidString(parts[i + 1]) || isStringInteger(parts[i + 1])))
-			{
 				continue;
-			}
 			else
-			{
 				return false;
-			}
-
-			/*if ((!isStringInteger(parts[i - 1]) && !isStringDouble(parts[i - 1]) && !isStringValidString(parts[i - 1])) || (!isStringDouble(parts[i + 1]) && !isStringValidString(parts[i + 1]) && !isStringInteger(parts[i + 1])))
-			{
-				return false;
-			}*/
 		}
 	}
 
@@ -188,13 +197,6 @@ string StringHelper::calculateEquationInString(string source) const {
 	{
 		return "#ERROR";
 	}
-	source.insert(source.begin(), '=');
-
-	if (!isStringValidFormula(source))
-	{
-		return "#ERROR";
-	}
-	source.erase(source.begin());
 
 	addSpaceInBetweenWords(source);
 	trim(source);
@@ -383,6 +385,23 @@ string StringHelper::getStringFilledWithSpaces(size_t num_of_spaces) const {
 void StringHelper::addSpaceInBetweenWords(string& source) const {
 	for (size_t i = 0; i < source.size(); i++)
 	{
+		if (source[i] == '"')
+		{
+			i++;
+			if (i == source.size() - 1)
+			{
+				return;
+			}
+
+			while (source[i] != '"')
+			{
+				i++;
+				if (i == source.size() - 1)
+				{
+					return;
+				}
+			}
+		}
 		if (!isdigit(source[i]) && !isalpha(source[i]) && source[i] != '.' && source[i] != ' ' && source[i] != '"')
 		{
 			source.insert(source.begin() + i, ' ');

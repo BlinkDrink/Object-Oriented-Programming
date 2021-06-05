@@ -18,7 +18,7 @@ ErrorType* ErrorType::clone() const
 
 DataType ErrorType::getDataType() const
 {
-	return DataType::ERROR;
+	return DataType::ERROR_TYPE;
 }
 
 string ErrorType::getRawData() const

@@ -5,12 +5,7 @@
 
 class DoubleType : public CellType {
 private:
-	/*
-	*	@brief Validates whether given string input is valid real number.
-	*
-	*	@returns true if valid, false otherwise
-	*/
-	bool validateData(const string& data) const;
+
 public:
 	/*
 	*	@brief Initializes DoubleType object with given parameter
@@ -20,7 +15,7 @@ public:
 	DoubleType(const string& data);
 
 	/*
-	*	@brief prints m_real and m_sign on the console
+	*	@brief prints the real number on the console
 	*/
 	virtual void print() const override;
 

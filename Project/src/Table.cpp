@@ -67,71 +67,8 @@ Table::Table(size_t rows, size_t cols) {
 }
 
 void Table::print() const {
-	if (m_rows == 0 && m_cols == 0)
-	{
-		cout << "Table is empty" << endl;
-		return;
-	}
-
-	vector<int> longestWordsPerCol = getLongestWordPerCol();
-
-
-	StringHelper sh;
-	size_t rowsLen = strlen(to_string(m_rows).c_str());
-	string leadingSpace = sh.getStringFilledWithSpaces(rowsLen);
-	cout << leadingSpace;
-	for (size_t i = 0; i < m_cols; i++)
-	{
-		string spaces;
-		if (longestWordsPerCol[i] != 0)
-		{
-			spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[i] - 1);
-		}
-		else
-		{
-			spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[i]);
-		}
-		cout << " | " << (char)(i + 65) << spaces;
-	}
-
-	cout << " |\n";
-
-	for (size_t i = 0; i < m_rows; i++)
-	{
-		string spacesForNumbersCol = sh.getStringFilledWithSpaces(rowsLen - strlen(to_string(i + 1).c_str()));
-		cout << i + 1 << spacesForNumbersCol << " | ";
-		for (size_t j = 0; j < m_cols; j++)
-		{
-			CellType* content = m_cells[i][j].getContent();
-			if (content != nullptr)
-			{
-				string spaces;
-				if (content->getDataType() == DataType::FORMULA)
-				{
-					size_t sizeOfCalc = sh.calculateEquationInString(content->getRawData()).size();
-					spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[j] - sizeOfCalc);
-				}
-				else
-				{
-					spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[j] - content->getRawData().size());
-
-				}
-				content->print();
-				cout << spaces << " | ";
-			}
-			else
-			{
-				string spaces;
-				if (longestWordsPerCol[j] == 0)
-					spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[j] + 1);
-				else
-					spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[j]);
-
-				cout << spaces << " | ";
-			}
-		}
-		cout << '\n';
-	}
+	printFirstRow();
+	printAfterFirstRow();
 }
 
 void Table::setCellAt(size_t row, size_t col, const Cell& cell) {
@@ -155,7 +92,7 @@ void Table::setCellAt(size_t row, size_t col, const Cell& cell) {
 
 void Table::expandRows(size_t row) {
 	size_t rowsToAdd = m_rows <= row ? row - m_rows : 0;
-	for (size_t i = 0; i < rowsToAdd + 1; i++)
+	for (size_t i = 0; i < rowsToAdd; i++)
 	{
 		vector<Cell> newRow;
 		for (size_t i = 0; i < m_cols; i++)
@@ -170,15 +107,95 @@ void Table::expandRows(size_t row) {
 void Table::expandCols(size_t col) {
 	for (size_t i = 0; i < m_rows; i++)
 	{
-		while (m_cells[i].size() != col + 1)
+		while (m_cells[i].size() != col)
 		{
 			m_cells[i].push_back(Cell(nullptr));
 		}
 	}
 
-	m_cols = col + 1;
+	m_cols = col;
 }
 
 size_t Table::getRows() const { return m_rows; }
 
 size_t Table::getCols() const { return m_cols; }
+
+bool Table::empty() const {
+	if (m_rows == 0 && m_cols == 0)
+		return true;
+
+	return false;
+}
+
+void Table::printFirstRow() const {
+	vector<int> longestWordsPerCol = getLongestWordPerCol();
+
+	StringHelper sh;
+	size_t rowsLen = m_rows == 0 ? 0 : log10(m_rows) + 1;
+	string leadingSpace = sh.getStringFilledWithSpaces(rowsLen);
+	cout << leadingSpace;
+	for (size_t i = 0; i < m_cols; i++)
+	{
+		string spaces;
+		if (longestWordsPerCol[i] != 0)
+		{
+			spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[i] - 1);
+		}
+		else
+		{
+			spaces = sh.getStringFilledWithSpaces(longestWordsPerCol[i]);
+		}
+		cout << " | " << (char)(i + 65) << spaces;
+	}
+
+	cout << " |" << endl;
+}
+
+void Table::printAfterFirstRow() const {
+	vector<int> longestWordsPerCol = getLongestWordPerCol();
+	StringHelper sh;
+	size_t rowsLen = m_rows == 0 ? 0 : log10(m_rows) + 1;
+
+	for (size_t i = 0; i < m_rows; i++)
+	{
+		string spacesForNumbersCol = sh.getStringFilledWithSpaces(rowsLen - strlen(to_string(i + 1).c_str()));
+		cout << i + 1 << spacesForNumbersCol << " | ";
+		for (size_t j = 0; j < m_cols; j++)
+		{
+			printCellInformation(i, j, longestWordsPerCol[j]);
+			cout << " | ";
+		}
+		cout << endl;
+	}
+}
+
+void Table::printCellInformation(size_t row, size_t col, size_t longestWordOfCol) const {
+	StringHelper sh;
+	CellType* content = m_cells[row][col].getContent();
+	if (content != nullptr)
+	{
+		string spaces;
+		if (content->getDataType() == DataType::FORMULA)
+		{
+			size_t sizeOfCalc = sh.calculateEquationInString(content->getRawData()).size();
+			spaces = sh.getStringFilledWithSpaces(longestWordOfCol - sizeOfCalc);
+		}
+		else
+		{
+			spaces = sh.getStringFilledWithSpaces(longestWordOfCol - content->getRawData().size());
+		}
+
+		content->print();
+		cout << spaces;
+	}
+	else
+	{
+		string spaces;
+		if (longestWordOfCol == 0)
+			spaces = sh.getStringFilledWithSpaces(longestWordOfCol + 1);
+		else
+			spaces = sh.getStringFilledWithSpaces(longestWordOfCol);
+
+		cout << spaces;
+	}
+}

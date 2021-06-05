@@ -13,7 +13,6 @@ private:
 	size_t m_rows;
 	size_t m_cols;
 
-
 	/*
 	*	@brief Looks up given column to find the longest content
 	*
@@ -74,5 +73,31 @@ public:
 	*	@brief Gets current columns of the table
 	*/
 	size_t getCols() const;
+
+	/*
+	*	@brief Checks if the table is empty
+	*
+	*	@returns true if empty, false otherwise
+	*/
+	bool empty() const;
+
+	/*
+	*	@brief Prints the first row of the table(the one containing A-Z)
+	*/
+	void printFirstRow() const;
+
+	/*
+	*	@brief Prints the rest of the table after the first row
+	*/
+	void printAfterFirstRow() const;
+
+	/*
+	*	@brief Prints the contents of a given cell
+	*
+	*	@param row				- row of cell
+	*	@param col				- column of cell
+	*	@param longestWordOfCol - the length of the longest word for the given column
+	*/
+	void printCellInformation(size_t row, size_t col, size_t longestWordOfCol) const;
 };
 

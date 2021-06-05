@@ -5,5 +5,5 @@ enum class DataType {
 	DOUBLE,
 	STRING,
 	FORMULA,
-	ERROR
+	ERROR_TYPE
 };

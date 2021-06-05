@@ -51,6 +51,55 @@ TEST_CASE("StringHelper splitBy", "[splitBy]") {
 
 		//Assert
 		REQUIRE(parts.size() == 5);
+		REQUIRE(parts[0] == "A");
+		REQUIRE(parts[1] == "bra");
+		REQUIRE(parts[2] == "ca");
+		REQUIRE(parts[3] == "da");
+		REQUIRE(parts[4] == "bra");
+	}
+
+	SECTION("splitBy_WithDelimeterInEnquotedString_SplitItProperly") {
+		//Arrange
+		string toSplit = "hello \"Some string\" bye bye";
+
+		//Act
+		vector<string> parts = sh.splitBy(toSplit, " ");
+
+		//Assert
+		REQUIRE(parts.size() == 4);
+		REQUIRE(parts[0] == "hello");
+		REQUIRE(parts[1] == "\"Some string\"");
+		REQUIRE(parts[2] == "bye");
+		REQUIRE(parts[3] == "bye");
+	}
+
+	SECTION("splitBy_WithStringConcatenatedToQuotedString_SplitItProperly") {
+		//Arrange
+		string toSplit = "hello\"Some string\" bye bye";
+
+		//Act
+		vector<string> parts = sh.splitBy(toSplit, " ");
+
+		//Assert
+		REQUIRE(parts.size() == 3);
+		REQUIRE(parts[0] == "hello\"Some string\"");
+		REQUIRE(parts[1] == "bye");
+		REQUIRE(parts[2] == "bye");
+	}
+
+	SECTION("splitBy_WithQuotedStringInTheEnd_SplitItProperly") {
+		//Arrange
+		string toSplit = "hello bye bye \"Some string\"";
+
+		//Act
+		vector<string> parts = sh.splitBy(toSplit, " ");
+
+		//Assert
+		REQUIRE(parts.size() == 4);
+		REQUIRE(parts[0] == "hello");
+		REQUIRE(parts[1] == "bye");
+		REQUIRE(parts[2] == "bye");
+		REQUIRE(parts[3] == "\"Some string\"");
 	}
 }
 
@@ -109,11 +158,15 @@ TEST_CASE("StringHelper isStringValidFormula", "[isStringValidFormula]") {
 		REQUIRE(sh.isStringValidFormula("=-17.0-542"));
 		REQUIRE(sh.isStringValidFormula("=95"));
 		REQUIRE(sh.isStringValidFormula("=15/15*\"14.14.23\" +  55-55"));
+		REQUIRE(sh.isStringValidFormula("=\"123\" + \"Hello world!\"   \":D\""));
+		REQUIRE(sh.isStringValidFormula("    =  15"));
 	}
 
 	SECTION("isStringValidFormula_OnInvalidFormula_False") {
 		//Assert
 		REQUIRE(!sh.isStringValidFormula("95"));
+		REQUIRE(!sh.isStringValidFormula("="));
+		REQUIRE(!sh.isStringValidFormula("    =      "));
 		REQUIRE(!sh.isStringValidFormula("95.142.124"));
 		REQUIRE(!sh.isStringValidFormula("95..142"));
 		REQUIRE(!sh.isStringValidFormula("=95....12   "));
@@ -268,22 +321,145 @@ TEST_CASE("StringHelper addSpaceInBetweenWords", "[addSpaceInBetweenWords]") {
 TEST_CASE("StringHelper calculateEquationInString", "[calculateEquationInString]") {
 	StringHelper sh;
 	SECTION("calculateEquationInString_WithValidEquation_ReturnCorrectResult") {
-		//Arrange
-		string eq = "-15-13+12*44-55+\"123.123.123\"";
-
-		//Act
-		string res = sh.calculateEquationInString(eq);
-
 		//Assert
-		REQUIRE(stod(res) == 445.0);
+		REQUIRE(stod(sh.calculateEquationInString("-15 - 13 + 12 * 44 - 55 + \"123.123.123\"")) == 445.0);
 		REQUIRE(stod(sh.calculateEquationInString("-15-13+12*44-55^2")) == -2525.0);
+		REQUIRE(stod(sh.calculateEquationInString("-2000 / 100 + \"123\"/123* 1 - 2^10 ")) == -1043.0);
+		REQUIRE(stod(sh.calculateEquationInString("-9 / 4.5 + \"123.50\"/123.50 * 1 - 2.5^10 ")) == -9537.743164);
+		REQUIRE(stod(sh.calculateEquationInString("-3^2^4^10")) == 1.4780882941434592331608321020638e+38);
+		REQUIRE(stod(sh.calculateEquationInString("0/10")) == 0);
 	}
 
 	SECTION("calculateEquationInString_WithInvalidEquation_Return#ERROR") {
 		//Assert
-		REQUIRE(sh.calculateEquationInString("-15-13+12*44-55^2+") == "#ERROR");
-		REQUIRE(sh.calculateEquationInString("^15/15*30 +  55") == "#ERROR");
-		REQUIRE(sh.calculateEquationInString("15/15*\"14.14.23\" +  55-55") == "#ERROR");
 		REQUIRE(sh.calculateEquationInString("") == "#ERROR");
+		REQUIRE(sh.calculateEquationInString("^15/15*\"0.01.AS\" +  55") == "#ERROR");
+		REQUIRE(sh.calculateEquationInString("15/15*\"14.14.23\" +  55-55") == "#ERROR");
+		REQUIRE(sh.calculateEquationInString("15/\"0\"") == "#ERROR");
+		REQUIRE(sh.calculateEquationInString("10/0") == "#ERROR");
+		REQUIRE(sh.calculateEquationInString("") == "#ERROR");
+	}
+}
+
+TEST_CASE("StringHelper containsPower", "[containsPower]") {
+	StringHelper sh;
+	vector<string> container = { "hi", "hello", "^" };
+	SECTION("containsPower_OnVectorWithPowerSymbol_True") {
+
+		REQUIRE(sh.containsPower(container));
+	}
+
+	SECTION("containsPower_OnVectorWithoutPowerSymbol_False") {
+		container.pop_back();
+
+		REQUIRE(!sh.containsPower(container));
+	}
+}
+
+TEST_CASE("StringHelper containsMultiplication", "[containsMultiplication]") {
+	StringHelper sh;
+	vector<string> container = { "hi", "hello", "*" };
+	SECTION("containsMultiplication_OnVectorWithMultiplicationSymbol_True") {
+
+		REQUIRE(sh.containsMultiplication(container));
+	}
+
+	SECTION("containsMultiplication_OnVectorWithoutMultiplicationSymbol_False") {
+		container.pop_back();
+
+		REQUIRE(!sh.containsMultiplication(container));
+	}
+}
+
+TEST_CASE("StringHelper containsDivision", "[containsDivision]") {
+	StringHelper sh;
+	vector<string> container = { "hi", "hello", "/" };
+	SECTION("containsDivision_OnVectorWithDivisionSymbol_True") {
+		//Assert
+		REQUIRE(sh.containsDivision(container));
+	}
+
+	SECTION("containsDivision_OnVectorWithoutDivisionSymbol_False") {
+		//Arrange
+		container.pop_back();
+
+		//Assert
+		REQUIRE(!sh.containsDivision(container));
+	}
+}
+
+TEST_CASE("StringHelper containsAditionOrSubtraction", "[containsAditionOrSubtraction]") {
+	StringHelper sh;
+	vector<string> container = { "hi", "hello", "+" };
+	SECTION("containsAditionOrSubtraction_OnVectorWithAdditionSymbol_True") {
+		//Assert
+		REQUIRE(sh.containsAditionOrSubtraction(container));
+	}
+
+	SECTION("containsAditionOrSubtraction_OnVectorWithSubtractionSymbol_False") {
+		//Arrange
+		container.pop_back();
+		container.push_back("-");
+
+		//Assert
+		REQUIRE(sh.containsAditionOrSubtraction(container));
+	}
+
+	SECTION("containsAditionOrSubtraction_OnVectorWithoutSubtractionSymbol_False") {
+		//Arrange
+		container.pop_back();
+
+		//Assert
+		REQUIRE(!sh.containsAditionOrSubtraction(container));
+	}
+}
+
+TEST_CASE("StringHelper removeEmptyStringsInVector", "[removeEmptyStringsInVector]") {
+	StringHelper sh;
+	vector<string> container = { "hi", "hello", "/", "", "" };
+	SECTION("removeEmptyStringsInVector_OnVectorWithEmptyStrings_RemoveThem") {
+		//Act
+		sh.removeEmptyStringsInVector(container);
+
+		//Assert
+		REQUIRE(container.size() == 3);
+	}
+
+	SECTION("removeEmptyStringsInVector_OnVectorWithoutEmptyStrings_DoNothing") {
+		//Arrange
+		vector<string> container = { "hi", "hello", "/" };
+
+		//Act
+		sh.removeEmptyStringsInVector(container);
+
+		//Assert
+		REQUIRE(container.size() == 3);
+	}
+}
+
+TEST_CASE("StringHelper getStringFilledWithSpaces", "[getStringFilledWithSpaces]") {
+	StringHelper sh;
+	SECTION("getStringFilledWithSpaces_WithPositiveNumber_ReturnProperNumberOfSpaces") {
+		//Arrange
+		size_t numOfSpaces = 5;
+
+		//Act
+		string spaces = sh.getStringFilledWithSpaces(numOfSpaces);
+
+		//Assert
+		REQUIRE(spaces == "     ");
+		REQUIRE(spaces.size() == 5);
+	}
+
+	SECTION("getStringFilledWithSpaces_WithZero_ReturnEmptyString") {
+		//Arrange
+		size_t numOfSpaces = 0;
+
+		//Act
+		string spaces = sh.getStringFilledWithSpaces(numOfSpaces);
+
+		//Assert
+		REQUIRE(spaces == "");
+		REQUIRE(spaces.size() == 0);
 	}
 }
