@@ -7,7 +7,6 @@ using std::string;
 using std::vector;
 
 class FormulaType : public CellType {
-private:
 public:
 	/*
 	*	@brief Initializes m_formula with given string

@@ -16,20 +16,19 @@ CommandParser::CommandParser(const string& str) {
 
 void CommandParser::tokenizeInnerString() {
 	size_t tokensWordInd = 0;
-	size_t numWhiteSpaces = 0;
 	size_t i = 0;
 
 	while (raw[i])
 	{
 		if (raw[i] == '"')
 		{
-			tokensWordInd = i + 1;
+			tokensWordInd = i;
 			i++;
 			while (raw[i] != '"')
 			{
 				i++;
 			}
-			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd));
+			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd + 1));
 			i++;
 		}
 		else if (raw[i] == ' ')

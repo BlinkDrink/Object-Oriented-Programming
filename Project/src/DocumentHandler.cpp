@@ -37,11 +37,8 @@ DocumentHandler& DocumentHandler::getInstance() {
 }
 
 void DocumentHandler::populateTableFromFile() {
-	StringHelper sh;
-
 	if (!m_reader.is_open())
 		throw invalid_argument("There is currently no opened file for reading.");
-
 
 	initializeEmptyTable();
 
@@ -66,6 +63,7 @@ void DocumentHandler::openFile(const string& path) {
 		throw invalid_argument("Couldn't open file for reading.");
 	}
 
+
 	populateTableFromFile();
 
 	m_reader.close();
@@ -81,9 +79,7 @@ void DocumentHandler::openFile(const string& path) {
 
 void DocumentHandler::closeFile() {
 	if (!m_writer.is_open())
-	{
 		throw exception("There is currently no linked file.");
-	}
 
 	if (m_writer.is_open())
 	{
@@ -108,6 +104,11 @@ void DocumentHandler::closeFile() {
 				else if (choice == 'c') {
 					break;
 				}
+				else
+				{
+					cout << red << "Invalid choice" << reset << endl;
+				}
+				cin.ignore();
 			}
 		}
 		else
@@ -115,6 +116,8 @@ void DocumentHandler::closeFile() {
 			m_writer.close();
 		}
 	}
+
+	m_table.clearTable();
 }
 
 void DocumentHandler::saveToFile() {
@@ -123,9 +126,83 @@ void DocumentHandler::saveToFile() {
 		throw exception("Currently there is no file linked to this document.");
 	}
 
+	StringHelper sh;
 
+	for (size_t i = 0; i < m_table.getRows(); i++)
+	{
+		for (size_t j = 0; j < m_table[i].size(); j++)
+		{
+			if (m_table[i][j].getContent() != nullptr)
+			{
+				if (m_table[i][j].getCellType() == DataType::FORMULA)
+				{
+					string toWrite("=" + m_table[i][j].getContent()->getRawData());
+					sh.enquoteString(toWrite);
+					m_writer << toWrite;
+				}
+				else if (m_table[i][j].getCellType() == DataType::STRING)
+				{
+					string toWrite(m_table[i][j].getContent()->getRawData());
+					sh.enquoteString(toWrite);
+					m_writer << toWrite;
+				}
+				else
+				{
+					m_writer << m_table[i][j].getContent()->getRawData();
+				}
+			}
+
+			if (j != m_table[i].size() - 1)
+			{
+				m_writer << ",";
+			}
+		}
+		m_writer << endl;
+	}
 
 	m_isSaved = true;
+}
+
+void DocumentHandler::editFile(size_t row, size_t col, const string& content) {
+	StringHelper sh;
+	string cpy(content);
+	sh.trim(cpy);
+	Cell c(nullptr);
+
+	if (sh.isStringInteger(cpy))
+	{
+		c = Cell(new IntegerType(cpy));
+	}
+	else if (sh.isStringDouble(cpy))
+	{
+		c = Cell(new DoubleType(cpy));
+	}
+	else if (sh.isStringValidString(cpy))
+	{
+		sh.removeQuotations(cpy);
+		sh.trim(cpy);
+		if (sh.isStringValidFormula(cpy))
+		{
+			cpy.erase(cpy.begin());
+			c = Cell(new FormulaType(cpy));
+		}
+		else
+		{
+			c = Cell(new StringType(cpy));
+		}
+	}
+	else if (content.empty())
+	{
+		c = Cell(nullptr);
+	}
+	else
+	{
+		string e("Error: row " + to_string(row) + ", col " + to_string(col) + ", " + cpy + " is unknown data type");
+		throw  invalid_argument(e);
+	}
+
+	m_table.setCellAt(row, col, c);
+	m_isSaved = false;
 }
 
 void DocumentHandler::initializeEmptyTable() {
@@ -158,39 +235,7 @@ void DocumentHandler::fillTableFromFile() {
 		vector<string> parts = sh.splitBy(content, ",");
 		for (size_t i = 0; i < parts.size(); i++)
 		{
-			sh.trim(parts[i]);
-			if (sh.isStringInteger(parts[i]))
-			{
-				m_table.setCellAt(currRow, i, Cell(new IntegerType(parts[i])));
-			}
-			else if (sh.isStringDouble(parts[i]))
-			{
-				m_table.setCellAt(currRow, i, Cell(new DoubleType(parts[i])));
-			}
-			else if (sh.isStringValidString(parts[i]))
-			{
-				sh.removeQuotations(parts[i]);
-				sh.trim(parts[i]);
-				if (sh.isStringValidFormula(parts[i]))
-				{
-					parts[i].erase(parts[i].begin());
-					m_table.setCellAt(currRow, i, Cell(new FormulaType(parts[i])));
-				}
-				else
-				{
-					m_table.setCellAt(currRow, i, Cell(new StringType(parts[i])));
-				}
-			}
-			else if (parts[i].empty())
-			{
-				m_table.setCellAt(currRow, i, Cell(nullptr));
-			}
-			else
-			{
-				string e("Error: ");
-				e += "row " + to_string(currRow) + ", col " + to_string(i) + ", " + parts[i] + " is unknown data type";
-				throw  invalid_argument(e);
-			}
+			editFile(currRow, i, parts[i]);
 		}
 		currRow++;
 	}
@@ -199,6 +244,7 @@ void DocumentHandler::fillTableFromFile() {
 void DocumentHandler::run() {
 	menu();
 	CommandParser cp;
+	StringHelper sh;
 
 	while (true)
 	{
@@ -236,9 +282,19 @@ void DocumentHandler::run() {
 			cout << green << "Successfully opened " << cp.atToken(1) << reset << endl;
 			break;
 		case CommandType::CLOSE:
-			closeFile();
+			try
+			{
+				closeFile();
+			}
+			catch (const exception& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
 
 			cout << green << "Successfully closed file.";
+			break;
+		case CommandType::NEW:
 			break;
 		case CommandType::SAVE:
 			try
@@ -250,19 +306,31 @@ void DocumentHandler::run() {
 				cout << red << e.what() << reset << endl;
 			}
 
-			cout << green << "Successfully saved file into " << filePath;
-			break;
-		case CommandType::NEW:
+			cout << green << "Successfully saved file into " << filePath << reset << endl;
 			break;
 		case CommandType::SAVEAS:
 			break;
-		case CommandType::PRINT:
-			if (m_table.empty())
+		case CommandType::EDIT:
+			try
 			{
-				cout << yellow << "Table is empty." << reset << endl;
+				if (!sh.isStringValidCellAddress(cp.atToken(1)))
+				{
+					cout << red << "Invalid formula address" << reset << endl;
+					break;
+				}
+
+				Pair<size_t, size_t> pair = sh.extractCellAddressDetails(cp.atToken(1));
+				editFile(pair.key, pair.value, cp.atToken(2));
+			}
+			catch (const invalid_argument& e)
+			{
+				cout << red << e.what() << reset << endl;
 				break;
 			}
 
+			cout << green << "Successfully set cell " << cp.atToken(1) << ", with content " << cp.atToken(2) << reset << endl;
+			break;
+		case CommandType::PRINT:
 			try
 			{
 				m_table.print();
@@ -271,6 +339,7 @@ void DocumentHandler::run() {
 			{
 				cout << red << e.what() << reset << endl;
 			}
+
 			break;
 		case CommandType::EXIT:
 			cout << termcolor::magenta << "Exiting the program..." << reset << endl;

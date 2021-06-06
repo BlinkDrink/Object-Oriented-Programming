@@ -40,8 +40,8 @@ size_t Table::getLongestContentAtCol(size_t col) const {
 	return longest;
 }
 
-vector<int> Table::getLongestWordPerCol() const {
-	vector<int> lengthPerCol;
+vector<size_t> Table::getLongestWordPerCol() const {
+	vector<size_t> lengthPerCol;
 
 	for (size_t i = 0; i < m_cols; i++)
 	{
@@ -67,6 +67,12 @@ Table::Table(size_t rows, size_t cols) {
 }
 
 void Table::print() const {
+	if (empty())
+	{
+		cout << "Table is empty." << endl;
+		return;
+	}
+
 	printFirstRow();
 	printAfterFirstRow();
 }
@@ -77,21 +83,21 @@ void Table::setCellAt(size_t row, size_t col, const Cell& cell) {
 		throw invalid_argument("Columns cannot exceed 25(counting from 0)");
 	}
 
-	if (row >= m_rows)
+	if (row + 1 > m_rows)
 	{
-		expandRows(row);
+		expandRows(row + 1);
 	}
 
-	if (col >= m_cols)
+	if (col + 1 > m_cols)
 	{
-		expandCols(col);
+		expandCols(col + 1);
 	}
 
 	m_cells[row][col] = cell;
 }
 
 void Table::expandRows(size_t row) {
-	size_t rowsToAdd = m_rows <= row ? row - m_rows : 0;
+	size_t rowsToAdd = row - m_rows;
 	for (size_t i = 0; i < rowsToAdd; i++)
 	{
 		vector<Cell> newRow;
@@ -116,6 +122,10 @@ void Table::expandCols(size_t col) {
 	m_cols = col;
 }
 
+const vector<Cell>& Table::operator[](size_t row) {
+	return m_cells[row];
+}
+
 size_t Table::getRows() const { return m_rows; }
 
 size_t Table::getCols() const { return m_cols; }
@@ -128,7 +138,7 @@ bool Table::empty() const {
 }
 
 void Table::printFirstRow() const {
-	vector<int> longestWordsPerCol = getLongestWordPerCol();
+	vector<size_t> longestWordsPerCol = getLongestWordPerCol();
 
 	StringHelper sh;
 	size_t rowsLen = m_rows == 0 ? 0 : log10(m_rows) + 1;
@@ -152,7 +162,7 @@ void Table::printFirstRow() const {
 }
 
 void Table::printAfterFirstRow() const {
-	vector<int> longestWordsPerCol = getLongestWordPerCol();
+	vector<size_t> longestWordsPerCol = getLongestWordPerCol();
 	StringHelper sh;
 	size_t rowsLen = m_rows == 0 ? 0 : log10(m_rows) + 1;
 
@@ -198,4 +208,18 @@ void Table::printCellInformation(size_t row, size_t col, size_t longestWordOfCol
 
 		cout << spaces;
 	}
+}
+
+void Table::clearTable() {
+	for (size_t i = 0; i < m_cells.size(); i++)
+	{
+		for (size_t j = 0; j < m_cells[i].size(); j++)
+		{
+			m_cells[i].clear();
+		}
+	}
+
+	m_cells.clear();
+	m_cols = 0;
+	m_rows = 0;
 }

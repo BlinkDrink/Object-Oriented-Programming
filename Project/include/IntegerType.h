@@ -7,8 +7,7 @@ public:
 	/*
 	*	@brief Initializes IntegerType with given value and sign
 	*
-	*	@param value - value to be initialized with
-	*	@param s	 - sign to be initialized with
+	*	@param data - string to be initialized with
 	*/
 	IntegerType(const string& data);
 

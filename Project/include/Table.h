@@ -25,7 +25,7 @@ private:
 	*
 	*	@returns vector<int> filled with size of longest word for the column
 	*/
-	vector<int> getLongestWordPerCol() const;
+	vector<size_t> getLongestWordPerCol() const;
 public:
 	Table();
 
@@ -65,6 +65,13 @@ public:
 	void expandCols(size_t col);
 
 	/*
+	*	@brief Getter of desired row
+	*
+	*	@param row - row to be returned
+	*/
+	const vector<Cell>& operator[](size_t row);
+
+	/*
 	*	@brief Gets current rows of the table
 	*/
 	size_t getRows() const;
@@ -99,5 +106,10 @@ public:
 	*	@param longestWordOfCol - the length of the longest word for the given column
 	*/
 	void printCellInformation(size_t row, size_t col, size_t longestWordOfCol) const;
+
+	/*
+	*	@brief Clears table's rows and columns. Leaves it empty
+	*/
+	void clearTable();
 };
 

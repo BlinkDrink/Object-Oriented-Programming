@@ -1,12 +1,12 @@
 #pragma once
 #include<string>
 #include<vector>
+#include "Pair.h"
 
 using std::string;
 using std::vector;
 
 class StringHelper {
-private:
 public:
 	/*
 	*	@brief Splits a given string(source) into parts by given delimeter
@@ -135,4 +135,26 @@ public:
 	*	@param source - string which numbers/words will be divided by whitespace
 	*/
 	void addSpaceInBetweenWords(string& source) const;
+
+	/*
+	*	@brief Checks if given string matches a cell adress type("A1" is valid but "AA1" is invalid)
+	*
+	*	@param source - string to be checked
+	*/
+	bool isStringValidCellAddress(string source) const;
+
+	/*
+	*	@brief Goes through a cell address and extracts rows and columns
+	*
+	*	@param source - string to have it's details extracted
+	*	@returns pair of numbers, first one - rows, second one - columns
+	*/
+	Pair<size_t, size_t> extractCellAddressDetails(string source) const;
+
+	/*
+	*	@brief Enqote the given string
+	*
+	*	@param source - string to be enquoted
+	*/
+	void enquoteString(string& source) const;
 };

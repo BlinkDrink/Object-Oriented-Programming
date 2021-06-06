@@ -50,7 +50,7 @@ public:
 
 	/*
 	*	@brief Attempts to close the opened file. If session hasn't been saved then it prompts the user for confirmation
-	*	to either save/don't save/cancel
+	*	to either save/don't save/cancel. Clears in memory table.
 	*/
 	void closeFile();
 
@@ -60,9 +60,21 @@ public:
 	void saveToFile();
 
 	/*
+	*	@brief Edits a cell at the given row and column with given content.
+	*
+	*	@param row	   - row of table
+	*	@param col	   - column of table
+	*	@param content - content with which it will be edited
+	*/
+	void editFile(size_t row, size_t col, const string& content);
+
+	/*
 	*	@brief Executes the main logic of the program
 	*/
 	void run();
 
+	/*
+	*	@brief Closes file associated with this document
+	*/
 	~DocumentHandler();
 };

@@ -337,7 +337,6 @@ TEST_CASE("StringHelper calculateEquationInString", "[calculateEquationInString]
 		REQUIRE(sh.calculateEquationInString("15/15*\"14.14.23\" +  55-55") == "#ERROR");
 		REQUIRE(sh.calculateEquationInString("15/\"0\"") == "#ERROR");
 		REQUIRE(sh.calculateEquationInString("10/0") == "#ERROR");
-		REQUIRE(sh.calculateEquationInString("") == "#ERROR");
 	}
 }
 
@@ -461,5 +460,52 @@ TEST_CASE("StringHelper getStringFilledWithSpaces", "[getStringFilledWithSpaces]
 		//Assert
 		REQUIRE(spaces == "");
 		REQUIRE(spaces.size() == 0);
+	}
+}
+
+TEST_CASE("StringHelper isStringValidCellAddress", "[isStringValidCellAddress]") {
+	StringHelper sh;
+	SECTION("isStringValidCellAddress_OnValidCell_True") {
+		//Assert
+		REQUIRE(sh.isStringValidCellAddress("A1"));
+		REQUIRE(sh.isStringValidCellAddress("Z100"));
+		REQUIRE(sh.isStringValidCellAddress("C6005129"));
+		REQUIRE(sh.isStringValidCellAddress("H105129"));
+	}
+
+	SECTION("isStringValidCellAddress_OnInvalidCell_False") {
+		//Assert
+		REQUIRE(!sh.isStringValidCellAddress("AA1"));
+		REQUIRE(!sh.isStringValidCellAddress(" ZZ100"));
+		REQUIRE(!sh.isStringValidCellAddress("	C6005129.125"));
+		REQUIRE(!sh.isStringValidCellAddress("H105129A"));
+		REQUIRE(!sh.isStringValidCellAddress("H"));
+		REQUIRE(!sh.isStringValidCellAddress("10"));
+		REQUIRE(!sh.isStringValidCellAddress("123.da"));
+	}
+}
+
+//TODO: Finish tests of extractCellAddressDetails
+TEST_CASE("StringHelper extractCellAddressDetails", "[extractCellAddressDetails]") {
+	StringHelper sh;
+	SECTION("isStringValidCellAddress_OnValidCell_True") {
+		string str = "hi";
+
+
+		sh.enquoteString(str);
+
+		//Assert
+		REQUIRE(str == "\"hi\"");
+	}
+
+	SECTION("isStringValidCellAddress_OnInvalidCell_False") {
+		//Assert
+		REQUIRE(!sh.isStringValidCellAddress("AA1"));
+		REQUIRE(!sh.isStringValidCellAddress(" ZZ100"));
+		REQUIRE(!sh.isStringValidCellAddress("	C6005129.125"));
+		REQUIRE(!sh.isStringValidCellAddress("H105129A"));
+		REQUIRE(!sh.isStringValidCellAddress("H"));
+		REQUIRE(!sh.isStringValidCellAddress("10"));
+		REQUIRE(!sh.isStringValidCellAddress("123.da"));
 	}
 }

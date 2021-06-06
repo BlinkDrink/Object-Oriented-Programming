@@ -1,4 +1,5 @@
 #include "StringHelper.h"
+using std::stoi;
 
 vector<string> StringHelper::splitBy(string source, const string& delimiter) const {
 	vector<string> words;
@@ -40,7 +41,6 @@ vector<string> StringHelper::splitBy(string source, const string& delimiter) con
 
 	return words;
 }
-
 
 bool StringHelper::isStringInteger(const string& source) const {
 	if (source.empty())
@@ -106,7 +106,6 @@ bool StringHelper::isStringValidFormula(const string& source) const {
 	if (cpy.empty() || cpy[0] != '=')
 		return false;
 
-
 	cpy.erase(cpy.begin());						// Remove '=' and begin checking correctness
 	addSpaceInBetweenWords(cpy);				// Divide words/numbers with spaces so the splitByFunction can catch every element
 	vector<string> parts = splitBy(cpy, " ");
@@ -159,7 +158,7 @@ string& StringHelper::trim(string& source) const {
 
 	while (source[start] == ' ')
 	{
-		source.erase(source.begin() + start);
+		source.erase(source.begin());
 	}
 
 	size_t end = source.size() > 0 ? source.size() - 1 : 0;
@@ -409,4 +408,45 @@ void StringHelper::addSpaceInBetweenWords(string& source) const {
 			i += 2;
 		}
 	}
+}
+
+bool StringHelper::isStringValidCellAddress(string source) const {
+	trim(source);
+
+	if (source.empty() || source[0] < 65 || source[0] > 90)
+		return false;
+
+	source.erase(source.begin());
+
+	if (!isStringInteger(source))
+	{
+		return false;
+	}
+
+	if (stoi(source) < 1)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+Pair<size_t, size_t> StringHelper::extractCellAddressDetails(string source) const {
+	Pair<size_t, size_t> pair;
+	trim(source);
+
+	size_t column = (source[0] - 65);
+	source.erase(source.begin());
+	pair.value = column;
+
+	size_t rows = 0;
+	rows = stoi(source) - 1;
+	pair.key = rows;
+
+	return pair;
+}
+
+void StringHelper::enquoteString(string& source) const {
+	source.insert(source.begin(), '"');
+	source.insert(source.end(), '"');
 }

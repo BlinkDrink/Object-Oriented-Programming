@@ -4,8 +4,6 @@
 #include "CellType.h"
 
 class DoubleType : public CellType {
-private:
-
 public:
 	/*
 	*	@brief Initializes DoubleType object with given parameter
