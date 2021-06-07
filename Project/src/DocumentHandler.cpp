@@ -25,7 +25,7 @@ using std::getline;
 using std::to_string;
 using std::endl;
 
-DocumentHandler::DocumentHandler() : m_isSaved(false) {
+DocumentHandler::DocumentHandler() {
 }
 
 void DocumentHandler::menu() const {
@@ -37,10 +37,7 @@ DocumentHandler& DocumentHandler::getInstance() {
 }
 
 void DocumentHandler::populateTableFromFile() {
-	if (!m_reader.is_open())
-		throw invalid_argument("There is currently no opened file for reading.");
-
-	initializeEmptyTable();
+	initializeEmptyTableFromFile();
 
 	if (!m_reader.good())
 		m_reader.clear();
@@ -50,10 +47,11 @@ void DocumentHandler::populateTableFromFile() {
 	fillTableFromFile();
 }
 
-void DocumentHandler::openFile(const string& path) {
-	if (m_writer.is_open())
+bool DocumentHandler::openFile(const string& path) {
+	if (isDocumentLinkedToFile())
 	{
-		closeFile();
+		if (!closeFile())
+			return false;
 	}
 
 	m_reader.open(path);
@@ -63,70 +61,74 @@ void DocumentHandler::openFile(const string& path) {
 		throw invalid_argument("Couldn't open file for reading.");
 	}
 
-
+	clearState(false, false, true, false);
 	populateTableFromFile();
 
 	m_reader.close();
 	m_writer.open(path);
 
-	if (!m_writer.is_open())
+	if (!isDocumentLinkedToFile())
 	{
 		throw invalid_argument("Couldn't link current document with the file.");
 	}
 
-	filePath = path;
+	m_filePath = path;
+	clearState(false, true);
+	return true;
 }
 
-void DocumentHandler::closeFile() {
-	if (!m_writer.is_open())
-		throw exception("There is currently no linked file.");
+bool DocumentHandler::closeFile() {
+	if (!isDocumentLinkedToFile())
+		throw exception("Cannot close - no document loaded");
 
-	if (m_writer.is_open())
+	if (!m_isSaved)
 	{
-		if (!m_isSaved)
+		while (true)
 		{
-			while (true)
+			char choice;
+			cout << "There are unsaved changes. SAVE/DON'T SAVE/CANCEL(s/d/c): ";
+			cin >> choice;
+			if (choice == 's')
 			{
-				char choice;
-				cout << "There are unsaved changes. SAVE/DON'T SAVE/CANCEL(s/d/c): ";
-				cin >> choice;
-				if (choice == 's')
-				{
-					saveToFile();
-					cout << green << "File saved." << reset << endl;
-					break;
-				}
-				else if (choice == 'd') {
-					m_writer.close();
-					cout << yellow << "File not saved." << reset << endl;
-					break;
-				}
-				else if (choice == 'c') {
-					break;
-				}
-				else
-				{
-					cout << red << "Invalid choice" << reset << endl;
-				}
+				saveToFile();
+				m_writer.close();
+				cout << green << "File saved." << reset << endl;
+				break;
+			}
+			else if (choice == 'd') {
+				m_writer.close();
+				cout << yellow << "File not saved." << reset << endl;
+				break;
+			}
+			else if (choice == 'c') {
 				cin.ignore();
+				return false;
+			}
+			else
+			{
+				cout << red << "Invalid choice" << reset << endl;
 			}
 		}
-		else
-		{
-			m_writer.close();
-		}
+		cin.ignore();
+	}
+	else
+	{
+		m_writer.close();
 	}
 
-	m_table.clearTable();
+	clearState(false, false, true, true);
+	return true;
 }
 
 void DocumentHandler::saveToFile() {
-	if (!m_writer.is_open())
+	if (!isDocumentLinkedToFile())
 	{
-		throw exception("Currently there is no file linked to this document.");
+		throw exception("Cannot save - no document loaded");
 	}
 
 	StringHelper sh;
+	m_writer.close();
+	m_writer.open(m_filePath);
 
 	for (size_t i = 0; i < m_table.getRows(); i++)
 	{
@@ -160,10 +162,55 @@ void DocumentHandler::saveToFile() {
 		m_writer << endl;
 	}
 
-	m_isSaved = true;
+	setState(true);
+}
+
+void DocumentHandler::saveFileAs(const string& path) {
+	if (!isDocumentLinkedToFile() && !m_isNew)
+	{
+		throw exception("Cannot saveas - there is no loaded document or the document is not new");
+	}
+
+	if (isDocumentLinkedToFile())
+	{
+		m_writer.close();
+	}
+
+	m_writer.open(path);
+
+	if (!isDocumentLinkedToFile())
+	{
+		throw exception("Couldn't open file.");
+	}
+
+	m_filePath = path;
+	saveToFile();
+	clearState(false, true);
+}
+
+bool DocumentHandler::createNewDocument() {
+	if (isDocumentLinkedToFile())
+	{
+		if (!closeFile())
+			return false;
+	}
+
+	setState(false, true);
+	clearState(false, false, true, true);
 }
 
 void DocumentHandler::editFile(size_t row, size_t col, const string& content) {
+	if (!m_isNew && !isDocumentLinkedToFile())
+	{
+		throw exception("Cannot edit - no document loaded");
+	}
+
+	alterCell(row, col, content);
+
+	clearState(true);
+}
+
+void DocumentHandler::alterCell(size_t row, size_t col, const string& content) {
 	StringHelper sh;
 	string cpy(content);
 	sh.trim(cpy);
@@ -197,15 +244,23 @@ void DocumentHandler::editFile(size_t row, size_t col, const string& content) {
 	}
 	else
 	{
-		string e("Error: row " + to_string(row) + ", col " + to_string(col) + ", " + cpy + " is unknown data type");
+		string e("Error: incorrect value " + cpy);
 		throw  invalid_argument(e);
 	}
 
 	m_table.setCellAt(row, col, c);
-	m_isSaved = false;
 }
 
-void DocumentHandler::initializeEmptyTable() {
+bool DocumentHandler::isDocumentLinkedToFile() const {
+	if (!m_writer.is_open())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void DocumentHandler::initializeEmptyTableFromFile() {
 	StringHelper sh;
 	size_t rowsOfFile = 0;
 	size_t maxColOfFile = 0;
@@ -235,7 +290,7 @@ void DocumentHandler::fillTableFromFile() {
 		vector<string> parts = sh.splitBy(content, ",");
 		for (size_t i = 0; i < parts.size(); i++)
 		{
-			editFile(currRow, i, parts[i]);
+			alterCell(currRow, i, parts[i]);
 		}
 		currRow++;
 	}
@@ -248,9 +303,17 @@ void DocumentHandler::run() {
 
 	while (true)
 	{
-		string cmd;
+		string fileIndicator;
+		if (m_isNew)
+			fileIndicator = "new document";
+		else if (!m_filePath.empty())
+			fileIndicator = m_filePath;
+		else
+			fileIndicator = "no selected file";
+
+		cout << "(" + fileIndicator + ")" + ">";
+
 		cp.clearCmd();
-		cout << ">";
 		cp.readCmd();
 		cp.tokenizeInnerString();
 		if (cp.getRaw().size() == 0 || cp.size() == 0 || cp.size() > 3)
@@ -259,14 +322,13 @@ void DocumentHandler::run() {
 			continue;
 		}
 
-		cmd = cp.atToken(0);
-
 		switch (cp.getCommandType())
 		{
 		case CommandType::OPEN:
 			try
 			{
-				openFile(cp.atToken(1));
+				if (!openFile(cp.atToken(1)))
+					break;
 			}
 			catch (const invalid_argument& e)
 			{
@@ -284,7 +346,8 @@ void DocumentHandler::run() {
 		case CommandType::CLOSE:
 			try
 			{
-				closeFile();
+				if (!closeFile())
+					break;
 			}
 			catch (const exception& e)
 			{
@@ -292,9 +355,21 @@ void DocumentHandler::run() {
 				break;
 			}
 
-			cout << green << "Successfully closed file.";
+			cout << green << "Successfully closed file." << reset << endl;
 			break;
 		case CommandType::NEW:
+			try
+			{
+				if (!createNewDocument())
+					break;
+			}
+			catch (const exception& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+
+			cout << green << "Succesfully created new document" << reset << endl;
 			break;
 		case CommandType::SAVE:
 			try
@@ -304,11 +379,23 @@ void DocumentHandler::run() {
 			catch (const exception& e)
 			{
 				cout << red << e.what() << reset << endl;
+				break;
 			}
 
-			cout << green << "Successfully saved file into " << filePath << reset << endl;
+			cout << green << "Successfully saved file into " << m_filePath << reset << endl;
 			break;
 		case CommandType::SAVEAS:
+			try
+			{
+				saveFileAs(cp.atToken(1));
+			}
+			catch (const exception& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+
+			cout << green << "Successfully saved table to " << m_filePath << reset << endl;
 			break;
 		case CommandType::EDIT:
 			try
@@ -327,6 +414,11 @@ void DocumentHandler::run() {
 				cout << red << e.what() << reset << endl;
 				break;
 			}
+			catch (const exception& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
 
 			cout << green << "Successfully set cell " << cp.atToken(1) << ", with content " << cp.atToken(2) << reset << endl;
 			break;
@@ -338,18 +430,56 @@ void DocumentHandler::run() {
 			catch (const std::exception& e)
 			{
 				cout << red << e.what() << reset << endl;
+				break;
 			}
 
 			break;
 		case CommandType::EXIT:
+			try
+			{
+				if (isDocumentLinkedToFile())
+				{
+					if (!closeFile())
+						break;
+				}
+			}
+			catch (const exception& e)
+			{
+				cout << red << e.what() << reset << endl;
+				break;
+			}
+
 			cout << termcolor::magenta << "Exiting the program..." << reset << endl;
 			return;
 		case CommandType::NOCOMMAND:
 			cout << red << "Invalid command." << reset << endl;
+			break;
 		default:
 			break;
 		}
 	}
+}
+
+void DocumentHandler::clearState(bool turn_off_saved, bool turn_off_new, bool clear_table, bool clear_filePath) {
+	if (clear_filePath)
+		m_filePath.clear();
+
+	if (clear_table)
+		m_table.clearTable();
+
+	if (turn_off_new)
+		m_isNew = false;
+
+	if (turn_off_saved)
+		m_isSaved = false;
+}
+
+void DocumentHandler::setState(bool turn_on_saved, bool turn_on_new) {
+	if (turn_on_new)
+		m_isNew = true;
+
+	if (turn_on_saved)
+		m_isSaved = true;
 }
 
 DocumentHandler::~DocumentHandler() {

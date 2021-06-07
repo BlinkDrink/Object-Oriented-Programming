@@ -71,7 +71,7 @@ const string CommandParser::toUpper(const string& str) const {
 const string& CommandParser::atToken(size_t pos) const {
 	if (pos >= tokens.size())
 	{
-		throw out_of_range("Command out of range. There are not enough arguments.");
+		throw out_of_range("There are not enough arguments.");
 	}
 
 	return tokens[pos];
