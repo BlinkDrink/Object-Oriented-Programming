@@ -1,31 +1,61 @@
 #include <iostream>
-#include "CommandParser.h"
+#include "../include/CommandParser.h"
 
 using std::cin;
 using std::getline;
 using std::invalid_argument;
 using std::out_of_range;
 
-CommandParser::CommandParser() {
+CommandParser::CommandParser()
+{
 }
 
-CommandParser::CommandParser(const string& str) {
-	raw = str;
+void CommandParser::setData(const string &data)
+{
+	clearCmd();
+
+	if (getNumberOfQuotes(data) % 2 != 0)
+		throw invalid_argument("Invalid command, check the number of quotes");
+
+	raw = data;
+
 	tokenizeInnerString();
+
+	if (raw.size() == 0 || tokens.size() == 0 || tokens.size() > 3)
+		throw invalid_argument("Invalid command, check the number of arguments you've given");
 }
 
-void CommandParser::tokenizeInnerString() {
+void CommandParser::tokenizeInnerString()
+{
 	size_t tokensWordInd = 0;
+	size_t numberOfQuotes = getNumberOfQuotes(raw);
+	size_t currentQuotes = 0;
 	size_t i = 0;
 
 	while (raw[i])
 	{
+		if (i >= raw.size())
+		{
+			break;
+		}
+
 		if (raw[i] == '"')
 		{
+			currentQuotes++;
 			tokensWordInd = i;
 			i++;
-			while (raw[i] != '"')
+			while (currentQuotes < numberOfQuotes)
 			{
+				if (raw[i] == '"')
+				{
+					currentQuotes++;
+				}
+
+				if (currentQuotes == numberOfQuotes)
+				{
+					break;
+				}
+
 				i++;
 			}
 			tokens.push_back(raw.substr(tokensWordInd, i - tokensWordInd + 1));
@@ -50,11 +80,22 @@ void CommandParser::tokenizeInnerString() {
 	}
 }
 
-void CommandParser::readCmd() {
-	std::getline(cin, raw);
+size_t CommandParser::getNumberOfQuotes(const string &str)
+{
+	size_t quotes = 0;
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if (str[i] == '\"')
+		{
+			quotes++;
+		}
+	}
+
+	return quotes;
 }
 
-const string CommandParser::toUpper(const string& str) const {
+const string CommandParser::toUpper(const string &str) const
+{
 	string item;
 	item = str;
 	for (size_t i = 0; i < item.size(); i++)
@@ -68,7 +109,8 @@ const string CommandParser::toUpper(const string& str) const {
 	return item;
 }
 
-const string& CommandParser::atToken(size_t pos) const {
+const string &CommandParser::atToken(size_t pos) const
+{
 	if (pos >= tokens.size())
 	{
 		throw out_of_range("There are not enough arguments.");
@@ -77,15 +119,18 @@ const string& CommandParser::atToken(size_t pos) const {
 	return tokens[pos];
 }
 
-size_t CommandParser::size() const {
+size_t CommandParser::size() const
+{
 	return tokens.size();
 }
 
-string& CommandParser::getRaw() {
+string &CommandParser::getRaw()
+{
 	return raw;
 }
 
-CommandType CommandParser::getCommandType() const {
+CommandType CommandParser::getCommandType() const
+{
 	if (tokens.size() == 0)
 	{
 		return CommandType::NOCOMMAND;
@@ -134,7 +179,8 @@ CommandType CommandParser::getCommandType() const {
 	return CommandType::NOCOMMAND;
 }
 
-void CommandParser::clearCmd() {
+void CommandParser::clearCmd()
+{
 	raw.clear();
 	tokens.clear();
 }

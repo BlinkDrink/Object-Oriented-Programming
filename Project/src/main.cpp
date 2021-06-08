@@ -1,14 +1,16 @@
-#include<iostream>
-#include "IntegerType.h"
-#include "DoubleType.h"
-#include "StringType.h"
-#include "FormulaType.h"
-#include "Table.h"
-#include "DocumentHandler.h"
+#include <iostream>
+#include "../include/DocumentHandler.h"
+#include "../include/IntegerType.h"
+#include "../include/StringType.h"
 using std::cout;
 
-int main() {
-	DocumentHandler::getInstance().run();
+int main()
+{
+	//DocumentHandler::getInstance().run();
+
+	vector<Cell> v;
+	v.push_back(Cell(new IntegerType("13")));
+	v.push_back(Cell(new StringType("abc")));
 
 	return 0;
 }

@@ -1,18 +1,21 @@
 #pragma once
-#include<fstream>
-#include<string>
-#include "Table.h"
+#include <fstream>
+#include <string>
+#include "./Table.h"
 
 using std::ifstream;
 using std::ofstream;
 using std::string;
 
-class DocumentHandler {
+class DocumentHandler
+{
 private:
 	ifstream m_reader;
 	ofstream m_writer;
-	Table m_table;
 	string m_filePath;
+
+	Table m_table;
+
 	bool m_isSaved = false;
 	bool m_isNew = false;
 
@@ -37,20 +40,22 @@ private:
 	*	@brief Prints menu of commands on the console
 	*/
 	void menu() const;
-public:
-	static DocumentHandler& getInstance();
 
-	DocumentHandler(const DocumentHandler& other) = delete;
-	DocumentHandler& operator=(const DocumentHandler& other) = delete;
-	DocumentHandler(DocumentHandler&& other) = delete;
-	DocumentHandler& operator=(DocumentHandler&& other) = delete;
+public:
+	static DocumentHandler &getInstance();
+
+	DocumentHandler(const DocumentHandler &other) = delete;
+	DocumentHandler &operator=(const DocumentHandler &other) = delete;
+	DocumentHandler(DocumentHandler &&other) = delete;
+	DocumentHandler &operator=(DocumentHandler &&other) = delete;
 
 	/**
 	 *	@brief Attempts to open file with given path then populates table from the file
 	 *
 	 *	@param path - path to file
+	 *	@returns true if the operation succeeded, false otherwise
 	*/
-	bool openFile(const string& path);
+	bool openFile(const string &path);
 
 	/**
 	* 	@brief Attempts to close the opened file. If session hasn't been saved then it prompts the user for confirmation
@@ -70,7 +75,7 @@ public:
 	*
 	*	@param path - path to the new file
 	*/
-	void saveFileAs(const string& path);
+	void saveFileAs(const string &path);
 
 	/**
 	 *	@brief Creates new document(in memory) which is empty. If wished to be saved it should be called with "saveas"
@@ -86,7 +91,7 @@ public:
 	*	@param col	   - column of table
 	*	@param content - content with which it will be edited
 	*/
-	void editFile(size_t row, size_t col, const string& content);
+	void editFile(size_t row, size_t col, const string &content);
 
 	/**
 	*	@brief Checks if the current document is linked to any file
@@ -102,7 +107,7 @@ public:
 	*	@param col		- col of cell
 	*	@param content	- content to assign to the cell
 	*/
-	void alterCell(size_t row, size_t col, const string& content);
+	void alterCell(size_t row, size_t col, const string &content);
 
 	/**
 	*	@brief Executes the main logic of the program

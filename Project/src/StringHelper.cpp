@@ -1,7 +1,9 @@
-#include "StringHelper.h"
+#include <cmath>
+#include "../include/StringHelper.h"
 using std::stoi;
 
-vector<string> StringHelper::splitBy(string source, const string& delimiter) const {
+vector<string> StringHelper::splitBy(string source, const string &delimiter) const
+{
 	vector<string> words;
 	size_t pos = 0;
 
@@ -11,7 +13,8 @@ vector<string> StringHelper::splitBy(string source, const string& delimiter) con
 		return words;
 	}
 
-	while ((pos = source.find(delimiter)) != string::npos) {
+	while ((pos = source.find(delimiter)) != string::npos)
+	{
 		// Check if there is a quote. If so check if it contains a string and extract it
 		size_t quoteOccurence = source.substr(0, pos).find('"');
 		if (quoteOccurence != string::npos)
@@ -42,7 +45,8 @@ vector<string> StringHelper::splitBy(string source, const string& delimiter) con
 	return words;
 }
 
-bool StringHelper::isStringInteger(const string& source) const {
+bool StringHelper::isStringInteger(const string &source) const
+{
 	if (source.empty())
 	{
 		return false;
@@ -55,7 +59,8 @@ bool StringHelper::isStringInteger(const string& source) const {
 	return true;
 }
 
-bool StringHelper::isStringDouble(const string& source) const {
+bool StringHelper::isStringDouble(const string &source) const
+{
 	if (source.empty())
 	{
 		return false;
@@ -99,17 +104,18 @@ bool StringHelper::isStringDouble(const string& source) const {
 	return true;
 }
 
-bool StringHelper::isStringValidFormula(const string& source) const {
+bool StringHelper::isStringValidFormula(const string &source) const
+{
 	string cpy(source);
 	trim(cpy);
 
 	if (cpy.empty() || cpy[0] != '=')
 		return false;
 
-	cpy.erase(cpy.begin());						// Remove '=' and begin checking correctness
-	addSpaceInBetweenWords(cpy);				// Divide words/numbers with spaces so the splitByFunction can catch every element
+	cpy.erase(cpy.begin());		 // Remove '=' and begin checking correctness
+	addSpaceInBetweenWords(cpy); // Divide words/numbers with spaces so the splitByFunction can catch every element
 	vector<string> parts = splitBy(cpy, " ");
-	removeEmptyStringsInVector(parts); 			//Remove empty elements
+	removeEmptyStringsInVector(parts); //Remove empty elements
 
 	if (parts.empty())
 		return false;
@@ -119,13 +125,11 @@ bool StringHelper::isStringValidFormula(const string& source) const {
 		parts[parts.size() - 1] == "+" || parts[parts.size() - 1] == "-" || !isValidFormulaMember(parts[0]) || !isValidFormulaMember(parts[parts.size() - 1]))
 		return false;
 
-
 	for (size_t i = 1; i < parts.size() - 1; i++)
 	{
 		trim(parts[i]);
 		if (!isValidFormulaMember(parts[i]))
 			return false;
-
 
 		if (parts[i] == "+" || parts[i] == "-" || parts[i] == "/" || parts[i] == "*" || parts[i] == "^")
 		{
@@ -139,7 +143,8 @@ bool StringHelper::isStringValidFormula(const string& source) const {
 	return true;
 }
 
-bool StringHelper::isValidFormulaMember(const string& member) const {
+bool StringHelper::isValidFormulaMember(const string &member) const
+{
 	if (member == "+" || member == "-" || member == "/" || member == "*" || member == "^" || isStringDouble(member) || isStringInteger(member) || isStringValidString(member))
 	{
 		return true;
@@ -148,7 +153,8 @@ bool StringHelper::isValidFormulaMember(const string& member) const {
 	return false;
 }
 
-string& StringHelper::trim(string& source) const {
+string &StringHelper::trim(string &source) const
+{
 	if (source.empty())
 	{
 		return source;
@@ -172,7 +178,8 @@ string& StringHelper::trim(string& source) const {
 	return source;
 }
 
-bool StringHelper::isStringValidString(const string& source) const {
+bool StringHelper::isStringValidString(const string &source) const
+{
 	if (source.size() < 2 || source.empty() || source[0] != '"' || source[source.size() - 1] != '"')
 	{
 		return false;
@@ -181,7 +188,8 @@ bool StringHelper::isStringValidString(const string& source) const {
 	return true;
 }
 
-void StringHelper::removeQuotations(string& source) const {
+void StringHelper::removeQuotations(string &source) const
+{
 	if (!isStringValidString(source))
 	{
 		return;
@@ -191,7 +199,8 @@ void StringHelper::removeQuotations(string& source) const {
 	source.erase(source.end() - 1);
 }
 
-string StringHelper::calculateEquationInString(string source) const {
+string StringHelper::calculateEquationInString(string source) const
+{
 	if (source.empty())
 	{
 		return "#ERROR";
@@ -313,7 +322,8 @@ string StringHelper::calculateEquationInString(string source) const {
 	return parts[0];
 }
 
-bool StringHelper::containsPower(const vector <string>& parts) const {
+bool StringHelper::containsPower(const vector<string> &parts) const
+{
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		if (parts[i] == "^")
@@ -325,7 +335,8 @@ bool StringHelper::containsPower(const vector <string>& parts) const {
 	return false;
 }
 
-bool StringHelper::containsMultiplication(const vector<string>& parts) const {
+bool StringHelper::containsMultiplication(const vector<string> &parts) const
+{
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		if (parts[i] == "*")
@@ -337,7 +348,8 @@ bool StringHelper::containsMultiplication(const vector<string>& parts) const {
 	return false;
 }
 
-bool StringHelper::containsDivision(const vector<string>& parts) const {
+bool StringHelper::containsDivision(const vector<string> &parts) const
+{
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		if (parts[i] == "/")
@@ -349,7 +361,8 @@ bool StringHelper::containsDivision(const vector<string>& parts) const {
 	return false;
 }
 
-bool StringHelper::containsAditionOrSubtraction(const vector<string>& parts) const {
+bool StringHelper::containsAditionOrSubtraction(const vector<string> &parts) const
+{
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		if (parts[i] == "+" || parts[i] == "-")
@@ -361,7 +374,8 @@ bool StringHelper::containsAditionOrSubtraction(const vector<string>& parts) con
 	return false;
 }
 
-void StringHelper::removeEmptyStringsInVector(vector<string>& parts) const {
+void StringHelper::removeEmptyStringsInVector(vector<string> &parts) const
+{
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		if (parts[i].empty())
@@ -372,7 +386,8 @@ void StringHelper::removeEmptyStringsInVector(vector<string>& parts) const {
 	}
 }
 
-string StringHelper::getStringFilledWithSpaces(size_t num_of_spaces) const {
+string StringHelper::getStringFilledWithSpaces(size_t num_of_spaces) const
+{
 	string s;
 	for (size_t i = 0; i < num_of_spaces; i++)
 	{
@@ -381,7 +396,8 @@ string StringHelper::getStringFilledWithSpaces(size_t num_of_spaces) const {
 	return s;
 }
 
-void StringHelper::addSpaceInBetweenWords(string& source) const {
+void StringHelper::addSpaceInBetweenWords(string &source) const
+{
 	for (size_t i = 0; i < source.size(); i++)
 	{
 		if (source[i] == '"')
@@ -410,7 +426,8 @@ void StringHelper::addSpaceInBetweenWords(string& source) const {
 	}
 }
 
-bool StringHelper::isStringValidCellAddress(string source) const {
+bool StringHelper::isStringValidCellAddress(string source) const
+{
 	trim(source);
 
 	if (source.empty() || source[0] < 65 || source[0] > 90)
@@ -431,7 +448,8 @@ bool StringHelper::isStringValidCellAddress(string source) const {
 	return true;
 }
 
-Pair<size_t, size_t> StringHelper::extractCellAddressDetails(string source) const {
+Pair<size_t, size_t> StringHelper::extractCellAddressDetails(string source) const
+{
 	Pair<size_t, size_t> pair;
 	trim(source);
 
@@ -446,7 +464,8 @@ Pair<size_t, size_t> StringHelper::extractCellAddressDetails(string source) cons
 	return pair;
 }
 
-void StringHelper::enquoteString(string& source) const {
+void StringHelper::enquoteString(string &source) const
+{
 	source.insert(source.begin(), '"');
 	source.insert(source.end(), '"');
 }

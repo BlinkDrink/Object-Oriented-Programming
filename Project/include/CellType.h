@@ -1,18 +1,24 @@
 #pragma once
-#include<string>
-#include "DataType.h"
+#include <string>
+#include "./DataType.h"
 
 using std::string;
 
 /*
 *	@brief Abstract class, used for interface purposes only
 */
-class CellType {
-protected:
-	string m_data;
+class CellType
+{
 public:
 	virtual void print() const = 0;
-	virtual CellType* clone() const = 0;
-	virtual DataType getDataType() const = 0;
-	virtual string getRawData() const = 0;
+	virtual CellType *clone() const = 0;
+	virtual string toString() const = 0;
+	virtual double toDouble() const = 0;
+	virtual size_t size() const = 0;
+
+	virtual double operator+(const CellType *other) const = 0;
+	virtual double operator-(const CellType *other) const = 0;
+	virtual double operator*(const CellType *other) const = 0;
+	virtual double operator/(const CellType *other) const = 0;
+	virtual double operator^(const CellType *other) const = 0;
 };

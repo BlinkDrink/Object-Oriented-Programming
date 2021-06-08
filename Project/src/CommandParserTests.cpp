@@ -1,250 +1,353 @@
-#include "catch2.hpp"
-#include<cassert>
-#include "CommandParser.h"
+﻿// #include <cassert>
+// #include "../include/catch2.hpp"
+// #include "../include/CommandParser.h"
 
-TEST_CASE("CommandParser constructor", "[CommandParser]") {
-	SECTION("constructor_givenNonEmptyString_SplitStringProperly") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// TEST_CASE("CommandParser constructor", "[CommandParser]")
+// {
+// 	SECTION("constructor_givenNonEmptyString_SplitStringProperly")
+// 	{
+// 		//Arrange
+// 		CommandParser cp;
+// 		cp.setData("peRsoN James 100");
 
-		//Act
-		bool areEqual = cp.atToken(0) == "peRsoN" && cp.atToken(1) == "James" && cp.atToken(2) == "100" && cp.getRaw() == s;
+// 		//Act
+// 		bool areEqual = cp.atToken(0) == "peRsoN" && cp.atToken(1) == "James" && cp.atToken(2) == "100" && cp.getRaw() == "peRsoN James 100";
 
-		//Assert
-		REQUIRE(areEqual == true);
-	}
-}
+// 		//Assert
+// 		REQUIRE(areEqual == true);
+// 	}
+// }
 
-TEST_CASE("CommandParser toUpper", "[toUpper]") {
-	SECTION("toUpper_onNonUpperedString_UpperIt") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// TEST_CASE("CommandParser toUpper", "[toUpper]")
+// {
+// 	CommandParser cp;
 
-		//Act
-		bool areEqual = cp.toUpper(s) == "PERSON JAMES 100";
+// 	SECTION("toUpper_onNonUpperedString_UpperIt")
+// 	{
+// 		//Arrange
+// 		string s = "peRsoN James 100";
 
-		//Assert
-		REQUIRE(areEqual == true);
-	}
+// 		//Act
+// 		bool areEqual = cp.toUpper(s) == "PERSON JAMES 100";
 
-	SECTION("toUpper_onUpperedString_DoNothing") {
-		//Arrange
-		char text[] = "PERSON JAMES 100";
-		string s = text;
-		CommandParser cp(s);
+// 		//Assert
+// 		REQUIRE(areEqual == true);
+// 	}
 
-		//Act
-		bool areEqual = cp.toUpper(s) == text;
+// 	SECTION("toUpper_onUpperedString_DoNothing")
+// 	{
+// 		//Arrange
+// 		string s = "PERSON JAMES 100";
 
-		//Assert
-		REQUIRE(areEqual == true);
-	}
-}
+// 		//Act
+// 		bool areEqual = cp.toUpper(s) == "PERSON JAMES 100";
 
-TEST_CASE("CommandParser atToken", "[atToken]") {
-	SECTION("atToken_AtValidIndex_ReturnContentsAccordingly") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// 		//Assert
+// 		REQUIRE(areEqual == true);
+// 	}
+// }
 
-		//Act
-		string str = cp.atToken(0);
+// TEST_CASE("CommandParser atToken", "[atToken]")
+// {
+// 	CommandParser cp;
+// 	SECTION("atToken_AtValidIndex_ReturnContentsAccordingly")
+// 	{
+// 		//Arrange
+// 		cp.setData("peRsoN James 100");
 
-		//Assert
-		REQUIRE(str == "peRsoN");
-	}
+// 		//Act
+// 		string str = cp.atToken(0);
 
-	SECTION("atToken_AtInvalidIndex_Throw") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// 		//Assert
+// 		REQUIRE(str == "peRsoN");
+// 	}
 
-		//Assert
-		REQUIRE_THROWS(cp.atToken(3));
-		REQUIRE_THROWS_AS(cp.atToken(3), std::out_of_range);
-	}
-}
+// 	SECTION("atToken_AtInvalidIndex_Throw")
+// 	{
+// 		//Arrange
+// 		cp.setData("peRsoN James 100");
 
-TEST_CASE("CommandParser size", "[size]") {
-	SECTION("size_OnNonEmptyTokens_GreaterThanZero") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// 		//Assert
+// 		REQUIRE_THROWS(cp.atToken(3));
+// 		REQUIRE_THROWS_AS(cp.atToken(3), std::out_of_range);
+// 	}
+// }
 
-		//Act
-		size_t length = cp.size();
+// TEST_CASE("CommandParser size", "[size]")
+// {
+// 	CommandParser cp;
+// 	SECTION("size_OnEmptyTokens_Zero")
+// 	{
+// 		//Assert
+// 		REQUIRE(cp.size() == 0);
+// 	}
 
-		//Assert
-		REQUIRE(length == 3);
-	}
+// 	SECTION("size_OnNonEmptyTokens_GreaterThanZero")
+// 	{
+// 		//Arrange
+// 		cp.setData("peRsoN James 100");
 
-	SECTION("size_OnEmptyTokens_Zero") {
-		//Arrange
-		CommandParser cp;
+// 		//Act
+// 		size_t length = cp.size();
 
-		//Assert
-		REQUIRE(cp.size() == 0);
-	}
-}
+// 		//Assert
+// 		REQUIRE(length == 3);
+// 	}
+// }
 
-TEST_CASE("CommandParser getRaw", "[getRaw]") {
-	SECTION("getRaw_OnNonEmptyCommand_NonEmptyString") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// TEST_CASE("CommandParser getRaw", "[getRaw]")
+// {
+// 	SECTION("getRaw_OnNonEmptyCommand_NonEmptyString")
+// 	{
+// 		//Arrange
+// 		string s = "peRsoN James 100";
+// 		CommandParser cp;
 
-		//Act
-		string cpy = cp.getRaw();
+// 		//Act
+// 		cp.setData(s);
+// 		string cpy = cp.getRaw();
 
-		//Assert
-		REQUIRE(cpy == s);
-	}
+// 		//Assert
+// 		REQUIRE(cpy == s);
+// 	}
 
-	SECTION("getRaw_OnEmptyCommand_EmptyString") {
-		//Arrange
-		CommandParser cp;
+// 	SECTION("getRaw_OnEmptyCommand_EmptyString")
+// 	{
+// 		//Arrange
+// 		CommandParser cp;
 
-		//Assert
-		REQUIRE(cp.getRaw().size() == 0);
-	}
-}
+// 		//Assert
+// 		REQUIRE(cp.getRaw().size() == 0);
+// 	}
+// }
 
-TEST_CASE("CommandParser clearCmd", "[clearCmd]") {
-	SECTION("clearCmd_OnNonEmptyCommand_ClearItAccordingly") {
-		//Arrange
-		string s = "peRsoN James 100";
-		CommandParser cp(s);
+// TEST_CASE("CommandParser setData", "[setData]")
+// {
+// 	SECTION("setData_WithValidData_InitializeProperly")
+// 	{
+// 		//Arrange
+// 		string s = "peRsoN James 100";
+// 		CommandParser cp;
 
-		//Act
-		cp.clearCmd();
+// 		//Act
+// 		cp.setData(s);
 
-		//Assert
-		REQUIRE(cp.size() == 0);
-	}
+// 		//Assert
+// 		REQUIRE(cp.size() == 3);
+// 		REQUIRE(cp.atToken(0) == "peRsoN");
+// 		REQUIRE(cp.atToken(1) == "James");
+// 		REQUIRE(cp.atToken(2) == "100");
+// 	}
 
-	SECTION("clearCmd_callAtToken_Throw") {
-		//Arrange
-		CommandParser cp("peRsoN James 100");
+// 	SECTION("setData_OnInvalidData_Throw")
+// 	{
+// 		//Arrange
+// 		CommandParser cp;
 
-		//Act
-		cp.clearCmd();
+// 		//Assert
+// 		REQUIRE_THROWS(cp.setData("peRsoN \"James 100"));
+// 		REQUIRE_THROWS_AS(cp.setData("peRsoN \"James 100"), std::invalid_argument);
+// 	}
+// }
 
-		//Assert
-		REQUIRE_THROWS(cp.atToken(0));
-	}
-}
+// TEST_CASE("CommandParser clearCmd", "[clearCmd]")
+// {
+// 	CommandParser cp;
+// 	SECTION("clearCmd_OnNonEmptyCommand_ClearItAccordingly")
+// 	{
+// 		//Act
+// 		cp.setData("peRsoN James 100");
+// 		cp.clearCmd();
 
-TEST_CASE("CommandParser getCommandType", "[getCommandType]") {
-	SECTION("getCommandType_OPEN_ReturnZero") {
-		//Arrange
-		string s = "OPEN config.txt";
-		CommandParser cp(s);
+// 		//Assert
+// 		REQUIRE(cp.size() == 0);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("clearCmd_callAtToken_Throw")
+// 	{
+// 		//Arrange
+// 		cp.setData("peRsoN James 100");
 
-		//Assert
-		REQUIRE(type == 0);
-	}
+// 		//Act
+// 		cp.clearCmd();
 
-	SECTION("getCommandType_CLOSE_ReturnOne") {
-		//Arrange
-		CommandParser cp("CLOSE");
+// 		//Assert
+// 		REQUIRE_THROWS(cp.atToken(0));
+// 	}
+// }
 
-		//Act
-		int type = (int)cp.getCommandType();
+// TEST_CASE("CommandParser getCommandType", "[getCommandType]")
+// {
+// 	CommandParser cp;
+// 	SECTION("getCommandType_OPEN_ReturnZero")
+// 	{
+// 		//Arrange
+// 		cp.setData("OPEN config.txt");
 
-		//Assert
-		REQUIRE(type == 1);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_NEW_ReturnTwo") {
-		//Arrange
-		CommandParser cp("NEW");
+// 		//Assert
+// 		REQUIRE(type == 0);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_CLOSE_ReturnOne")
+// 	{
+// 		//Arrange
+// 		cp.setData("CLOSE");
 
-		//Assert
-		REQUIRE(type == 2);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_SAVE_ReturnThree") {
-		//Arrange
-		CommandParser cp("SAVE");
+// 		//Assert
+// 		REQUIRE(type == 1);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_NEW_ReturnTwo")
+// 	{
+// 		//Arrange
+// 		cp.setData("NEW");
 
-		//Assert
-		REQUIRE(type == 3);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_SAVEAS_ReturnFour") {
-		//Arrange
-		CommandParser cp("SAVEAS");
+// 		//Assert
+// 		REQUIRE(type == 2);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_SAVE_ReturnThree")
+// 	{
+// 		//Arrange
+// 		cp.setData("SAVE");
 
-		//Assert
-		REQUIRE(type == 4);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_EDIT_ReturnFive") {
-		//Arrange
-		CommandParser cp("EDIT");
+// 		//Assert
+// 		REQUIRE(type == 3);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_SAVEAS_ReturnFour")
+// 	{
+// 		//Arrange
+// 		cp.setData("SAVEAS");
 
-		//Assert
-		REQUIRE(type == 5);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_PRINT_ReturnSix") {
-		//Arrange
-		CommandParser cp("PRINT");
+// 		//Assert
+// 		REQUIRE(type == 4);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_EDIT_ReturnFive")
+// 	{
+// 		//Arrange
+// 		cp.setData("EDIT");
 
-		//Assert
-		REQUIRE(type == 6);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_EXIT_ReturnSeven") {
-		//Arrange
-		CommandParser cp("EXIT");
+// 		//Assert
+// 		REQUIRE(type == 5);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_PRINT_ReturnSix")
+// 	{
+// 		//Arrange
+// 		cp.setData("PRINT");
 
-		//Assert
-		REQUIRE(type == 7);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_NOCOMMAND_ReturnEight") {
-		//Arrange
-		CommandParser cp("INVALID");
+// 		//Assert
+// 		REQUIRE(type == 6);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_EXIT_ReturnSeven")
+// 	{
+// 		//Arrange
+// 		cp.setData("EXIT");
 
-		//Assert
-		REQUIRE(type == 8);
-	}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
 
-	SECTION("getCommandType_NOCOMMAND_ReturnEight") {
-		//Arrange
-		CommandParser cp("");
+// 		//Assert
+// 		REQUIRE(type == 7);
+// 	}
 
-		//Act
-		int type = (int)cp.getCommandType();
+// 	SECTION("getCommandType_NOCOMMAND_ReturnEight")
+// 	{
+// 		//Arrange
+// 		cp.setData("INVALID");
 
-		//Assert
-		REQUIRE(type == 8);
-	}
-}
+// 		//Act
+// 		int type = (int)cp.getCommandType();
+
+// 		//Assert
+// 		REQUIRE(type == 8);
+// 	}
+
+// 	SECTION("getCommandType_NOCOMMAND_ReturnEight")
+// 	{
+// 		//Arrange
+// 		cp.setData("das");
+
+// 		//Act
+// 		int type = (int)cp.getCommandType();
+
+// 		//Assert
+// 		REQUIRE(type == 8);
+// 	}
+// }
+
+// TEST_CASE("CommandParser tokenizeInnerString", "[tokenizeInnerString]")
+// {
+// 	CommandParser cp;
+// 	SECTION("tokenizeInnerString_NonEmptyString_TokenizeProperly")
+// 	{
+// 		//Arrange
+// 		cp.setData("Edit argument1 argument2");
+
+// 		//Assert
+// 		REQUIRE(cp.size() == 3);
+// 		REQUIRE(cp.atToken(0) == "Edit");
+// 		REQUIRE(cp.atToken(1) == "argument1");
+// 		REQUIRE(cp.atToken(2) == "argument2");
+// 	}
+
+// 	SECTION("tokenizeInnerString_GivenQuotedString_TokenizeProperly")
+// 	{
+// 		//Arrange
+// 		cp.setData("  Edit \"argument1\" argument2  ");
+
+// 		//Assert
+// 		REQUIRE(cp.size() == 3);
+// 		REQUIRE(cp.atToken(0) == "Edit");
+// 		REQUIRE(cp.atToken(1) == "\"argument1\"");
+// 		REQUIRE(cp.atToken(2) == "argument2");
+// 	}
+
+// 	SECTION("tokenizeInnerString_GivenQuotedStringInQuotedString_TokenizeProperly")
+// 	{
+// 		//Arrange
+// 		cp.setData("  Edit \"\"argument1\"\" argument2  ");
+
+// 		//Assert
+// 		REQUIRE(cp.size() == 3);
+// 		REQUIRE(cp.atToken(0) == "Edit");
+// 		REQUIRE(cp.atToken(1) == "\"\"argument1\"\"");
+// 		REQUIRE(cp.atToken(2) == "argument2");
+// 	}
+
+// 	SECTION("tokenizeInnerString_GivenQuotedStringInQuotedString_TokenizeProperly")
+// 	{
+// 		//Arrange
+// 		cp.setData("  Edit \"\"argument1\" a second quoted \"argument\"\" argument2  ");
+
+// 		//Assert
+// 		REQUIRE(cp.size() == 3);
+// 		REQUIRE(cp.atToken(0) == "Edit");
+// 		REQUIRE(cp.atToken(1) == "\"\"argument1\" a second quoted \"argument\"\"");
+// 		REQUIRE(cp.atToken(2) == "argument2");
+// 	}
+// }

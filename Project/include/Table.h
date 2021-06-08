@@ -1,13 +1,14 @@
 #pragma once
-#include<iostream>
-#include<vector>
-#include "Cell.h"
-#include<string>
+#include <iostream>
+#include <vector>
+#include "./Cell.h"
+#include <string>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-class Table {
+class Table
+{
 private:
 	vector<vector<Cell>> m_cells;
 	size_t m_rows;
@@ -26,6 +27,7 @@ private:
 	*	@returns vector<int> filled with size of longest word for the column
 	*/
 	vector<size_t> getLongestWordPerCol() const;
+
 public:
 	Table();
 
@@ -48,7 +50,7 @@ public:
 	*	@param row - row index
 	*	@param col - col index
 	*/
-	void setCellAt(size_t row, size_t col, const Cell& cell);
+	void setCellAt(size_t row, size_t col, const Cell &cell);
 
 	/*
 	*	@brief Expands the table to the given row
@@ -69,7 +71,7 @@ public:
 	*
 	*	@param row - row to be returned
 	*/
-	const vector<Cell>& operator[](size_t row);
+	const vector<Cell> &operator[](size_t row) const;
 
 	/*
 	*	@brief Gets current rows of the table
@@ -112,4 +114,3 @@ public:
 	*/
 	void clearTable();
 };
-
