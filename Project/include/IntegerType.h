@@ -4,7 +4,7 @@
 class IntegerType : public CellType
 {
 private:
-	int m_value;
+	long long m_value;
 
 public:
 	/**

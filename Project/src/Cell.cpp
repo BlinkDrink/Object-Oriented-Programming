@@ -13,15 +13,26 @@ Cell::Cell(const string &content, const Table &ref)
 {
 	StringHelper sh;
 	if (sh.isStringInteger(content))
+	{
 		m_content = new IntegerType(content);
+	}
 	else if (sh.isStringDouble(content))
+	{
 		m_content = new DoubleType(content);
-	else if (sh.isStringValidFormula(content))
-		m_content = new FormulaType(content, ref);
+	}
 	else if (sh.isStringValidString(content))
-		m_content = new StringType(content);
+	{
+		string cpy(content);
+		sh.removeQuotations(cpy);
+		if (sh.isStringValidFormula(cpy))
+			m_content = new FormulaType(cpy, ref);
+		else
+			m_content = new StringType(cpy);
+	}
 	else if (content.empty())
+	{
 		m_content = nullptr;
+	}
 	else
 	{
 		string err = "Error: incorrect value " + content;

@@ -155,7 +155,10 @@ double FormulaType::calculateFormula() const
 		if (sh.isStringValidCellAddress(parts[i]))
 		{
 			Pair<size_t, size_t> pair = sh.extractCellAddressDetails(parts[i]);
-			parts[i] = to_string(m_table[pair.key][pair.value].getContentAsDouble());
+			if (m_table.getCols() <= pair.value || m_table.getRows() >= pair.key)
+				parts[i] = "0";
+			else
+				parts[i] = to_string(m_table[pair.key][pair.value].getContentAsDouble());
 		}
 	}
 
@@ -195,7 +198,14 @@ size_t FormulaType::size() const
 {
 	size_t len = 0;
 	double res = calculateFormula();
-	len += log10(res) + 1;
+	double tmp = res;
+
+	while (tmp != 0)
+	{
+		tmp /= 10;
+		len++;
+	}
+
 	if (res < 0)
 		len++;
 

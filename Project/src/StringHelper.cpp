@@ -132,13 +132,32 @@ bool StringHelper::isStringValidFormula(const string &source) const
 	vector<string> parts = splitBy(cpy, " ");
 	removeEmptyStringsInVector(parts); //Remove empty elements
 
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		if (parts[i] == "(" || parts[i] == ")")
+		{
+			parts.erase(parts.begin() + i);
+			i--;
+		}
+	}
+
 	if (parts.empty())
 		return false;
 
-	// Check first and last symbols to evaluate their correctness
-	if (parts[0] == "/" || parts[0] == "*" || parts[0] == "^" || parts[parts.size() - 1] == "/" || parts[parts.size() - 1] == "*" || parts[parts.size() - 1] == "^" ||
-		parts[parts.size() - 1] == "+" || parts[parts.size() - 1] == "-" || !isValidFormulaMember(parts[0]) || !isValidFormulaMember(parts[parts.size() - 1]))
+	size_t opCount = 0;
+	size_t numCount = 0;
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		if (parts[i] == "*" || parts[i] == "/" || parts[i] == "+" || parts[i] == "-" || parts[i] == "^")
+			opCount++;
+		else if (isStringDouble(parts[i]) || isStringInteger(parts[i]) || isStringValidCellAddress(parts[i]))
+			numCount++;
+	}
+
+	if (opCount >= numCount)
+	{
 		return false;
+	}
 
 	for (size_t i = 1; i < parts.size() - 1; i++)
 	{
@@ -148,7 +167,10 @@ bool StringHelper::isStringValidFormula(const string &source) const
 
 		if (parts[i] == "+" || parts[i] == "-" || parts[i] == "/" || parts[i] == "*" || parts[i] == "^")
 		{
-			if ((isStringInteger(parts[i - 1]) || isStringDouble(parts[i - 1]) || isStringValidString(parts[i - 1])) && (isStringDouble(parts[i + 1]) || isStringValidString(parts[i + 1]) || isStringInteger(parts[i + 1])))
+			if ((isStringInteger(parts[i - 1]) || isStringDouble(parts[i - 1]) ||
+				 isStringValidString(parts[i - 1]) || isStringValidCellAddress(parts[i - 1])) &&
+				(isStringDouble(parts[i + 1]) || isStringValidString(parts[i + 1]) ||
+				 isStringInteger(parts[i + 1]) || isStringValidCellAddress(parts[i + 1])))
 				continue;
 			else
 				return false;
@@ -160,7 +182,8 @@ bool StringHelper::isStringValidFormula(const string &source) const
 
 bool StringHelper::isValidFormulaMember(const string &member) const
 {
-	if (member == "+" || member == "-" || member == "/" || member == "*" || member == "^" || isStringDouble(member) || isStringInteger(member) || isStringValidString(member))
+
+	if (member == "(" || member == ")" || member == "+" || member == "-" || member == "/" || member == "*" || member == "^" || isStringDouble(member) || isStringInteger(member) || isStringValidString(member) || isStringValidCellAddress(member))
 	{
 		return true;
 	}

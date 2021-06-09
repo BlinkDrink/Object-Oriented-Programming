@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include "./CellType.h"
-#include "./Table.h"
+#include "../include/CellType.h"
 
+class Table;
 using std::vector;
 
 class Cell
@@ -18,10 +18,11 @@ private:
 	void copyFrom(const Cell &other);
 
 public:
-	/*
+	/**
 	*	@brief Initializes cell's content with the given argument
 	*
 	*	@param content - content to assign
+	*	@param ref 	   - refference to table container
 	*/
 	Cell(const string &content, const Table &ref);
 

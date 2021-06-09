@@ -26,7 +26,12 @@ IntegerType *IntegerType::clone() const
 size_t IntegerType::size() const
 {
 	size_t len = 0;
-	len += log10(m_value) + 1;
+	long long tmp = m_value;
+	while (tmp != 0)
+	{
+		tmp /= 10;
+		len++;
+	}
 
 	if (m_value < 0)
 		len++;

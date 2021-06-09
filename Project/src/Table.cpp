@@ -26,14 +26,6 @@ size_t Table::getLongestContentAtCol(size_t col) const
         CellType *content = m_cells[i][col].getContent();
         if (content != nullptr)
         {
-            // if (content->getDataType() == DataType::FORMULA)
-            // {
-            //     size_t calcSize = sh.calculateEquationInString(content->toString()).size();
-            //     if (longest < calcSize)
-            //         longest = calcSize;
-            // }
-            // else
-            // {
             if (longest < content->size())
                 longest = content->size();
         }
@@ -110,7 +102,7 @@ void Table::expandRows(size_t row)
         vector<Cell> newRow;
         for (size_t i = 0; i < m_cols; i++)
         {
-            newRow.push_back(Cell(nullptr));
+            newRow.push_back(Cell("", *this));
         }
         m_cells.push_back(newRow);
         m_rows++;
@@ -123,7 +115,7 @@ void Table::expandCols(size_t col)
     {
         while (m_cells[i].size() != col)
         {
-            m_cells[i].push_back(Cell(nullptr));
+            m_cells[i].push_back(Cell("", *this));
         }
     }
 
@@ -198,13 +190,6 @@ void Table::printCellInformation(size_t row, size_t col, size_t longestWordOfCol
     if (content != nullptr)
     {
         string spaces;
-        // if (content->getDataType() == DataType::FORMULA)
-        // {
-        //     size_t sizeOfCalc = sh.calculateEquationInString(content->toString()).size();
-        //     spaces = sh.getStringFilledWithSpaces(longestWordOfCol - sizeOfCalc);
-        // }
-        //else
-        //{
         spaces = sh.getStringFilledWithSpaces(longestWordOfCol - content->size());
 
         content->print();

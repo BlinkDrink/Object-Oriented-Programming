@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "./Cell.h"
 #include <string>
+#include "./Cell.h"
 
 using std::string;
 using std::vector;
