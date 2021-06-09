@@ -12,7 +12,6 @@ using std::string;
 
 /**
  * @brief Represents formulas in electronic table. Holds refference to the table that contains it.
- * 
  */
 class FormulaType : public CellType
 {
@@ -76,6 +75,13 @@ public:
 	*	@returns The newly allocated FormulaType* object
 	*/
 	virtual FormulaType *clone() const override;
+
+	/**
+	 * @brief Creates m_value string fit for file format
+	 * 
+	 * @return string formated content
+	 */
+	virtual string toFileFormat() const;
 
 	/*
 	*	@brief Getter

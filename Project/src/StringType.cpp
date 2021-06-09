@@ -20,6 +20,11 @@ StringType *StringType::clone() const
 	return new StringType(*this);
 }
 
+string StringType::toFileFormat() const
+{
+	return '"' + m_value + '"';
+}
+
 string StringType::toString() const
 {
 	return m_value;

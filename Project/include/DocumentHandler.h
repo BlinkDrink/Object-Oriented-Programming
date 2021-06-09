@@ -101,7 +101,7 @@ public:
 	bool isDocumentLinkedToFile() const;
 
 	/**
-	*	@brief Sets the cell at row|col with given content. Decides what type the cell is.
+	*	@brief Sets the cell at row|col with given content.
 	*
 	*	@param row		- row of cell
 	*	@param col		- col of cell

@@ -34,9 +34,19 @@ size_t IntegerType::size() const
 	return len;
 }
 
+string IntegerType::toFileFormat() const
+{
+	return toString();
+}
+
 double IntegerType::toDouble() const
 {
 	return m_value;
+}
+
+string IntegerType::toString() const
+{
+	return to_string(m_value);
 }
 
 double IntegerType::operator+(const CellType &other) const
@@ -72,9 +82,4 @@ double IntegerType::operator^(const CellType &other) const
 	double result = 0;
 	result = pow(m_value, other.toDouble());
 	return result;
-}
-
-string IntegerType::toString() const
-{
-	return to_string(m_value);
 }

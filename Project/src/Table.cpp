@@ -61,7 +61,7 @@ Table::Table(size_t rows, size_t cols)
         vector<Cell> newRow;
         for (size_t j = 0; j < cols; j++)
         {
-            newRow.push_back(Cell(nullptr));
+            newRow.push_back(Cell("", *this));
         }
         m_cells.push_back(newRow);
     }

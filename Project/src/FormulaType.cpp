@@ -176,6 +176,11 @@ FormulaType *FormulaType::clone() const
 	return new FormulaType(*this);
 }
 
+string FormulaType::toFileFormat() const
+{
+	return m_value;
+}
+
 double FormulaType::toDouble() const
 {
 	return calculateFormula();

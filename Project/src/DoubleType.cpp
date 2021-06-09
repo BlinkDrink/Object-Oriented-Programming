@@ -37,6 +37,11 @@ size_t DoubleType::size() const
 	return len;
 }
 
+string DoubleType::toFileFormat() const
+{
+	return toString();
+}
+
 string DoubleType::toString() const
 {
 	return to_string(m_value);

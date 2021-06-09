@@ -28,6 +28,13 @@ public:
 	*/
 	virtual DoubleType *clone() const override;
 
+	/**
+	 * @brief Creates m_value string fit for file format
+	 * 
+	 * @return string formated content
+	 */
+	virtual string toFileFormat() const;
+
 	/*
 	*	@brief Getter
 	*

@@ -1,10 +1,32 @@
-#include "../include/Cell.h"
 #include <iostream>
+#include "../include/Cell.h"
+#include "../include/StringHelper.h"
+#include "../include/IntegerType.h"
+#include "../include/DoubleType.h"
+#include "../include/FormulaType.h"
+#include "../include/StringType.h"
 
 using std::cout;
+using std::invalid_argument;
 
-Cell::Cell(CellType *content) : m_content(content)
+Cell::Cell(const string &content, const Table &ref)
 {
+	StringHelper sh;
+	if (sh.isStringInteger(content))
+		m_content = new IntegerType(content);
+	else if (sh.isStringDouble(content))
+		m_content = new DoubleType(content);
+	else if (sh.isStringValidFormula(content))
+		m_content = new FormulaType(content, ref);
+	else if (sh.isStringValidString(content))
+		m_content = new StringType(content);
+	else if (content.empty())
+		m_content = nullptr;
+	else
+	{
+		string err = "Error: incorrect value " + content;
+		throw invalid_argument(err);
+	}
 }
 
 void Cell::copyFrom(const Cell &other)
@@ -68,6 +90,11 @@ void Cell::print() const
 
 double Cell::getContentAsDouble() const
 {
+	if (m_content == nullptr)
+	{
+		return 0;
+	}
+
 	return m_content->toDouble();
 }
 

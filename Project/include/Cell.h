@@ -1,6 +1,7 @@
 #pragma once
-#include "./CellType.h"
 #include <vector>
+#include "./CellType.h"
+#include "./Table.h"
 
 using std::vector;
 
@@ -22,7 +23,7 @@ public:
 	*
 	*	@param content - content to assign
 	*/
-	Cell(CellType *content);
+	Cell(const string &content, const Table &ref);
 
 	/*
 	*	@brief Copy constructor
