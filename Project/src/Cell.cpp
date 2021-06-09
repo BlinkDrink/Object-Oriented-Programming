@@ -66,6 +66,11 @@ void Cell::print() const
 		m_content->print();
 }
 
+double Cell::getContentAsDouble() const
+{
+	return m_content->toDouble();
+}
+
 CellType *Cell::getContent() const
 {
 	return m_content;

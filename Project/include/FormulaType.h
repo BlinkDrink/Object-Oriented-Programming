@@ -1,10 +1,13 @@
 #pragma once
 #include <string>
-#include <vector>
+#include <queue>
+#include <stack>
 #include "./CellType.h"
 #include "./StringType.h"
 #include "./Table.h"
 
+using std::queue;
+using std::stack;
 using std::string;
 
 /**
@@ -15,7 +18,7 @@ class FormulaType : public CellType
 {
 private:
 	string m_value;
-	double m_calculated;
+	const Table &m_table;
 
 	/**
 	 * @brief Applies operator(op) on a and b.
@@ -35,6 +38,23 @@ private:
 	 */
 	size_t precedence(char op) const;
 
+	double postfix_equation(queue<StringType> &output) const;
+
+	/**
+	 * @brief Given infix order equation convert it to postfix
+	 * 
+	 * @param tokens 
+	 * @param values 
+	 * @param operators 
+	 * @return vector<StringType> 
+	 */
+	double shunting_yard(const vector<string> &tokens) const;
+
+	/**
+	 * @brief Calculates inner formula in FormulaType
+	 * 
+	 * @return double result after calculation
+	 */
 	double calculateFormula() const;
 
 public:
@@ -43,7 +63,7 @@ public:
 	*
 	*	@param equation - string to be initialized with
 	*/
-	FormulaType(const string &equation);
+	FormulaType(const string &equation, const Table &table_ref);
 
 	/*
 	*	@brief Prints the formula result on the console

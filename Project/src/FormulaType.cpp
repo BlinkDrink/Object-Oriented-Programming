@@ -5,6 +5,8 @@
 
 using std::cout;
 using std::invalid_argument;
+using std::queue;
+using std::stack;
 using std::to_string;
 
 double FormulaType::applyOperator(StringType &a, StringType &b, char op) const
@@ -38,97 +40,135 @@ size_t FormulaType::precedence(char op) const
 	return 0;
 }
 
+double FormulaType::shunting_yard(const vector<string> &tokens) const
+{
+	queue<StringType> output;
+	stack<char> operators;
+
+	StringHelper sh;
+	for (size_t i = 0; i < tokens.size(); i++)
+	{
+		string cpy(tokens[i]);
+		sh.trim(cpy);
+
+		if (cpy == " ")
+		{
+			continue;
+		}
+		else if (cpy == "(")
+		{
+			operators.push(cpy.back());
+		}
+		// Push numbers onto the queue
+		else if (sh.isStringDouble(cpy) || sh.isStringInteger(cpy))
+		{
+			output.push(cpy);
+		}
+		// If we encounter a right parenthesis, keep popping operators until seeing left parenthesis
+		else if (cpy == ")")
+		{
+			while (!operators.empty() && operators.top() != '(')
+			{
+				string op;
+				op += operators.top();
+				operators.pop();
+
+				output.push(op);
+			}
+
+			// Pop the remaining parenthesis
+			if (!operators.empty())
+				operators.pop();
+		}
+		// Last option is operator, check for operator precedence and adjust stack accordingly
+		else
+		{
+			while (!operators.empty() && precedence(operators.top()) >= precedence(cpy.back()))
+			{
+				string op;
+				op += operators.top();
+				operators.pop();
+
+				output.push(op);
+			}
+
+			operators.push(cpy.back());
+		}
+	}
+
+	// Add remaining operators at the end of the queue
+	while (!operators.empty())
+	{
+		string op;
+		op += operators.top();
+		operators.pop();
+
+		output.push(op);
+	}
+
+	return postfix_equation(output);
+}
+
+double FormulaType::postfix_equation(queue<StringType> &output) const
+{
+	StringHelper sh;
+	stack<StringType> result;
+	while (!output.empty())
+	{
+		if (sh.isStringDouble(output.front().toString()) || sh.isStringInteger(output.front().toString()))
+		{
+			result.push(output.front());
+			output.pop();
+		}
+		else
+		{
+			StringType val2 = result.top();
+			result.pop();
+
+			StringType val1 = result.top();
+			result.pop();
+
+			StringType op = output.front();
+			char oper = op.toString().back();
+			output.pop();
+
+			result.push(to_string(applyOperator(val1, val2, oper)));
+		}
+	}
+
+	return result.top().toDouble();
+}
+
 double FormulaType::calculateFormula() const
 {
 	StringHelper sh;
 	string cpy(m_value);
+
 	cpy.erase(cpy.begin());
 	sh.addSpaceInBetweenWords(cpy);
 	sh.trim(cpy);
 	vector<string> parts = sh.splitBy(cpy, " ");
 	sh.removeEmptyStringsInVector(parts);
 
-	vector<StringType> values;
-	vector<char> operators;
-
 	for (size_t i = 0; i < parts.size(); i++)
 	{
-		sh.trim(parts[i]);
-		if (parts[i] == " ")
+		if (sh.isStringValidCellAddress(parts[i]))
 		{
-			continue;
-		}
-		else if (parts[i] == "(")
-		{
-			operators.push_back(parts[i].back());
-		}
-		else if (sh.isStringDouble(parts[i]) || sh.isStringInteger(parts[i]))
-		{
-			values.push_back(parts[i]);
-		}
-		else if (parts[i] == ")")
-		{
-			while (!operators.empty() && operators.back() != '(')
-			{
-				StringType val2 = values.back();
-				values.back();
-
-				StringType val1 = values.back();
-				values.back();
-
-				char op = operators.back();
-				operators.back();
-
-				values.push_back(to_string(applyOperator(val1, val2, op)));
-			}
-
-			if (!operators.empty())
-				operators.pop_back();
-		}
-		else
-		{
-			while (!operators.empty() && precedence(operators.back()) >= precedence(parts[i].back()))
-			{
-				StringType val2 = values.back();
-				values.pop_back();
-
-				StringType val1 = values.back();
-				values.pop_back();
-
-				char op = operators.back();
-				operators.pop_back();
-
-				values.push_back(to_string(applyOperator(val1, val2, op)));
-			}
-
-			operators.push_back(parts[i].back());
+			Pair<size_t, size_t> pair = sh.extractCellAddressDetails(parts[i]);
+			parts[i] = to_string(m_table[pair.key][pair.value].getContentAsDouble());
 		}
 	}
 
-	while (!operators.empty())
-	{
-		StringType val2 = values.back();
-		values.pop_back();
-
-		StringType val1 = values.back();
-		values.pop_back();
-
-		char op = operators.back();
-		operators.pop_back();
-
-		values.push_back(to_string(applyOperator(val1, val2, op)));
-	}
-
-	return values.back().toDouble();
+	return shunting_yard(parts);
 }
 
-FormulaType::FormulaType(const string &equation) : m_value(equation)
+FormulaType::FormulaType(const string &equation, const Table &table_ref) : m_value(equation), m_table(table_ref)
 {
 }
 
 void FormulaType::print() const
 {
-	cout << m_calculated;
+	cout << calculateFormula();
 }
 
 FormulaType *FormulaType::clone() const
@@ -149,8 +189,9 @@ string FormulaType::toString() const
 size_t FormulaType::size() const
 {
 	size_t len = 0;
-	len += log10(m_calculated) + 1;
-	if (m_calculated < 0)
+	double res = calculateFormula();
+	len += log10(res) + 1;
+	if (res < 0)
 		len++;
 
 	return len;

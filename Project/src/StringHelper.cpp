@@ -52,9 +52,23 @@ bool StringHelper::isStringInteger(const string &source) const
 		return false;
 	}
 
+	bool hasDigits = false;
+
 	for (size_t i = 0; i < source.size(); i++)
+	{
+		if (i == 0 && source[0] == '-')
+		{
+			continue;
+		}
+
 		if (!isdigit(source[i]))
 			return false;
+		else
+			hasDigits = true;
+	}
+
+	if (!hasDigits)
+		return false;
 
 	return true;
 }
@@ -91,13 +105,14 @@ bool StringHelper::isStringDouble(const string &source) const
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
-
-		for (size_t j = 0; j < parts[i].size(); j++)
+		if (!isStringInteger(parts[i]))
 		{
-			if (parts[i][j] != '.' && !isdigit(parts[i][j]))
-			{
-				return false;
-			}
+			return false;
+		}
+
+		if (i == 1 && (parts[i].front() == '-' || parts[i].front() == '+'))
+		{
+			return false;
 		}
 	}
 

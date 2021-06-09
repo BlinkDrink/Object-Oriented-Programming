@@ -58,9 +58,9 @@ public:
 	*/
 	void print() const;
 
-	DataType getCellType() const;
-
 	CellType *getContent() const;
+
+	double getContentAsDouble() const;
 
 	~Cell();
 };
