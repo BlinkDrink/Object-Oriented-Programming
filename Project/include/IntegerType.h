@@ -26,13 +26,6 @@ public:
 	*/
 	virtual IntegerType *clone() const override;
 
-	/**
-	 * @brief Gets the length of the integer
-	 * 
-	 * @return size_t length
-	 */
-	virtual size_t size() const;
-
 	/*
 	*	@brief Getter
 	*
@@ -41,7 +34,14 @@ public:
 	virtual string toString() const override;
 
 	/**
-	 * @brief Returns int as double
+	 * @brief Gets the length of the integer
+	 * 
+	 * @return size_t length
+	 */
+	virtual size_t size() const;
+
+	/**
+	 * @brief Returns integer as double
 	 * 
 	 * @return double 
 	 */
@@ -50,20 +50,40 @@ public:
 	/**
 	 * @brief Sums IntegerType with other 
 	 * 
-	 * @param other other object type with which IntegerType will be summed
+	 * @param other object with which addition will be made
 	 * @return double 
 	 */
-	double operator+(const CellType *other) const;
+	double operator+(const CellType &other) const;
 
 	/**
 	 * @brief Subtracts IntegerType with other 
 	 * 
-	 * @param other other object type with which IntegerType will be subtracted
-	 * @return double 
+	 * @param other object with which subtraction will be made
+	 * @return double result after subtraction
 	 */
-	double operator-(const CellType *other) const;
+	double operator-(const CellType &other) const;
 
-	double operator*(const CellType *other) const;
-	double operator/(const CellType *other) const;
-	double operator^(const CellType *other) const;
+	/**
+	 * @brief Multiplies other with current object's inner value
+	 * 
+	 * @param other object with which multiplication will be made
+	 * @return double result after multiplication
+	 */
+	double operator*(const CellType &other) const;
+
+	/**
+	 * @brief Divides inner integer with other
+	 * 
+	 * @param other object with which division will be made
+	 * @return double result after multiplication
+	 */
+	double operator/(const CellType &other) const;
+
+	/**
+	 * @brief Raises inner integer to the power exponent other
+	 * 
+	 * @param other exponent value
+	 * @return double result after raising to the power
+	 */
+	double operator^(const CellType &other) const;
 };

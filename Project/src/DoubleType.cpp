@@ -42,37 +42,37 @@ string DoubleType::toString() const
 	return to_string(m_value);
 }
 
-double DoubleType::operator+(const CellType *other) const
+double DoubleType::operator+(const CellType &other) const
 {
 	double result = 0;
-	result = m_value + other->toDouble();
+	result = m_value + other.toDouble();
 	return result;
 }
 
-double DoubleType::operator-(const CellType *other) const
+double DoubleType::operator-(const CellType &other) const
 {
 	double result = 0;
-	result = m_value - other->toDouble();
+	result = m_value - other.toDouble();
 	return result;
 }
 
-double DoubleType::operator*(const CellType *other) const
+double DoubleType::operator*(const CellType &other) const
 {
 	double result = 0;
-	result = m_value * other->toDouble();
+	result = m_value * other.toDouble();
 	return result;
 }
 
-double DoubleType::operator/(const CellType *other) const
+double DoubleType::operator/(const CellType &other) const
 {
 	double result = 0;
-	result = m_value / other->toDouble();
+	result = m_value / other.toDouble();
 	return result;
 }
 
-double DoubleType::operator^(const CellType *other) const
+double DoubleType::operator^(const CellType &other) const
 {
 	double result = 0;
-	result = pow(m_value, other->toDouble());
+	result = pow(m_value, other.toDouble());
 	return result;
 }

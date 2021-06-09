@@ -41,27 +41,27 @@ size_t StringType::size() const
 	return m_value.size();
 }
 
-double StringType::operator+(const CellType *other) const
+double StringType::operator+(const CellType &other) const
 {
-	return toDouble() + other->toDouble();
+	return toDouble() + other.toDouble();
 }
 
-double StringType::operator-(const CellType *other) const
+double StringType::operator-(const CellType &other) const
 {
-	return toDouble() - other->toDouble();
+	return toDouble() - other.toDouble();
 }
 
-double StringType::operator*(const CellType *other) const
+double StringType::operator*(const CellType &other) const
 {
-	return toDouble() * other->toDouble();
+	return toDouble() * other.toDouble();
 }
 
-double StringType::operator/(const CellType *other) const
+double StringType::operator/(const CellType &other) const
 {
-	return toDouble() / other->toDouble();
+	return toDouble() / other.toDouble();
 }
 
-double StringType::operator^(const CellType *other) const
+double StringType::operator^(const CellType &other) const
 {
-	return pow(toDouble(), other->toDouble());
+	return pow(toDouble(), other.toDouble());
 }

@@ -45,7 +45,7 @@ public:
 	/**
 	 * @brief Gets m_value
 	 * 
-	 * @return double the calculated equation
+	 * @return double - inner value
 	 */
 	double toDouble() const;
 
@@ -55,7 +55,7 @@ public:
 	 * @param other object to sum up with
 	 * @return double result after addition
 	 */
-	virtual double operator+(const CellType *other) const override;
+	virtual double operator+(const CellType &other) const override;
 
 	/**
 	 * @brief Subtracts other from current object
@@ -63,7 +63,7 @@ public:
 	 * @param other object to subtract with
 	 * @return double result after subtraction
 	 */
-	virtual double operator-(const CellType *other) const override;
+	virtual double operator-(const CellType &other) const override;
 
 	/**
 	 * @brief Multiplies other with current object
@@ -71,7 +71,7 @@ public:
 	 * @param other object to multiply with
 	 * @return double result after multiplication
 	 */
-	virtual double operator*(const CellType *other) const override;
+	virtual double operator*(const CellType &other) const override;
 
 	/**
 	 * @brief Divides current object with other
@@ -79,13 +79,12 @@ public:
 	 * @param other object to divide with
 	 * @return double result after division
 	 */
-	virtual double operator/(const CellType *other) const override;
-
+	virtual double operator/(const CellType &other) const override;
 	/**
 	 * @brief Raises current object to the power of other
 	 * 
 	 * @param other exponent
 	 * @return double result after rasing to the exponent
 	 */
-	virtual double operator^(const CellType *other) const override;
+	virtual double operator^(const CellType &other) const override;
 };

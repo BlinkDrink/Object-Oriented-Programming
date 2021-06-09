@@ -201,51 +201,10 @@ void StringHelper::removeQuotations(string &source) const
 
 string StringHelper::calculateEquationInString(string source) const
 {
-	if (source.empty())
-	{
-		return "#ERROR";
-	}
-
 	addSpaceInBetweenWords(source);
 	trim(source);
 	vector<string> parts = splitBy(source, " ");
 	removeEmptyStringsInVector(parts);
-
-	// Check if equation contains strings
-	// If so, remove it's quotations and check if it is a valid int or double
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		if (isStringValidString(parts[i]))
-		{
-			removeQuotations(parts[i]);
-			if (!isStringDouble(parts[i]) && !isStringInteger(parts[i]))
-			{
-				parts[i] = "0";
-			}
-		}
-	}
-
-	if (!isStringInteger(parts[0]) && !isStringDouble(parts[0]))
-	{
-		parts[1].insert(parts[1].begin(), parts[0][0]);
-		parts.erase(parts.begin());
-	}
-
-	bool hasNumbers = false;
-
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		if (isStringDouble(parts[i]) || isStringInteger(parts[i]))
-		{
-			hasNumbers = true;
-			break;
-		}
-	}
-
-	if (!hasNumbers)
-	{
-		return "#ERROR";
-	}
 
 	// Power first
 	while (containsPower(parts))

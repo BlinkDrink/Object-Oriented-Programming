@@ -39,38 +39,38 @@ double IntegerType::toDouble() const
 	return m_value;
 }
 
-double IntegerType::operator+(const CellType *other) const
+double IntegerType::operator+(const CellType &other) const
 {
 	double result = 0;
-	result = m_value + other->toDouble();
+	result = m_value + other.toDouble();
 	return result;
 }
 
-double IntegerType::operator-(const CellType *other) const
+double IntegerType::operator-(const CellType &other) const
 {
 	double result = 0;
-	result = m_value - other->toDouble();
+	result = m_value - other.toDouble();
 	return result;
 }
 
-double IntegerType::operator*(const CellType *other) const
+double IntegerType::operator*(const CellType &other) const
 {
 	double result = 0;
-	result = m_value * other->toDouble();
+	result = m_value * other.toDouble();
 	return result;
 }
 
-double IntegerType::operator/(const CellType *other) const
+double IntegerType::operator/(const CellType &other) const
 {
 	double result = 0;
-	result = m_value / other->toDouble();
+	result = m_value / other.toDouble();
 	return result;
 }
 
-double IntegerType::operator^(const CellType *other) const
+double IntegerType::operator^(const CellType &other) const
 {
 	double result = 0;
-	result = pow(m_value, other->toDouble());
+	result = pow(m_value, other.toDouble());
 	return result;
 }
 

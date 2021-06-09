@@ -16,9 +16,9 @@ public:
 	virtual double toDouble() const = 0;
 	virtual size_t size() const = 0;
 
-	virtual double operator+(const CellType *other) const = 0;
-	virtual double operator-(const CellType *other) const = 0;
-	virtual double operator*(const CellType *other) const = 0;
-	virtual double operator/(const CellType *other) const = 0;
-	virtual double operator^(const CellType *other) const = 0;
+	virtual double operator+(const CellType &other) const = 0;
+	virtual double operator-(const CellType &other) const = 0;
+	virtual double operator*(const CellType &other) const = 0;
+	virtual double operator/(const CellType &other) const = 0;
+	virtual double operator^(const CellType &other) const = 0;
 };

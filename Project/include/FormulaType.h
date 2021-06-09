@@ -2,14 +2,40 @@
 #include <string>
 #include <vector>
 #include "./CellType.h"
+#include "./StringType.h"
+#include "./Table.h"
 
 using std::string;
 
+/**
+ * @brief Represents formulas in electronic table. Holds refference to the table that contains it.
+ * 
+ */
 class FormulaType : public CellType
 {
 private:
 	string m_value;
 	double m_calculated;
+
+	/**
+	 * @brief Applies operator(op) on a and b.
+	 * 
+	 * @param a left opperand
+	 * @param b right opperand
+	 * @param op operator(+,-,*,/,^)
+	 * @return double result after performing operation
+	 */
+	double applyOperator(StringType &a, StringType &b, char op) const;
+
+	/**
+	 * @brief Checks for the precedence of the given operator(op)
+	 * 
+	 * @param op operator to check it's precedence
+	 * @return size_t 1 if '+' or '-', 2 if '*' or '/'. 0 otherwise
+	 */
+	size_t precedence(char op) const;
+
+	double calculateFormula() const;
 
 public:
 	/*
@@ -58,7 +84,7 @@ public:
 	 * @param other object to sum up with
 	 * @return double result after addition
 	 */
-	virtual double operator+(const CellType *other) const override;
+	virtual double operator+(const CellType &other) const override;
 
 	/**
 	 * @brief Subtracts other from current object
@@ -66,7 +92,7 @@ public:
 	 * @param other object to subtract with
 	 * @return double result after subtraction
 	 */
-	virtual double operator-(const CellType *other) const override;
+	virtual double operator-(const CellType &other) const override;
 
 	/**
 	 * @brief Multiplies other with current object
@@ -74,7 +100,7 @@ public:
 	 * @param other object to multiply with
 	 * @return double result after multiplication
 	 */
-	virtual double operator*(const CellType *other) const override;
+	virtual double operator*(const CellType &other) const override;
 
 	/**
 	 * @brief Divides current object with other
@@ -82,7 +108,7 @@ public:
 	 * @param other object to divide with
 	 * @return double result after division
 	 */
-	virtual double operator/(const CellType *other) const override;
+	virtual double operator/(const CellType &other) const override;
 
 	/**
 	 * @brief Raises current object to the power of other
@@ -90,5 +116,5 @@ public:
 	 * @param other exponent
 	 * @return double result after rasing to the exponent
 	 */
-	virtual double operator^(const CellType *other) const override;
+	virtual double operator^(const CellType &other) const override;
 };
