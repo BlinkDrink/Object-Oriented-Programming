@@ -10,6 +10,7 @@ using std::cout;
 using std::endl;
 using std::cin;
 using std::getline;
+using std::stoi;
 using std::invalid_argument;
 using std::exception;
 using  std::out_of_range;
@@ -73,12 +74,10 @@ void Database::deletePersonRecord(unsigned int id) {
 	}
 
 	size_t vehicleNum = people[ind].getRegistrationsCount();
-
 	for (size_t i = 0; i < vehicleNum; i++)
 	{
 		releaseVehicleOfOwner(id, people[ind].getRegistrationAt(0));
 	}
-
 	people.erase(people.begin() + ind);
 }
 
@@ -202,6 +201,13 @@ void Database::readFromFile(const string& path, vector<string>& cmdHistory) {
 		throw invalid_argument("Couldn't open file.");
 	}
 
+	in.seekg(0, std::ios_base::end);
+	if (in.tellg() == 0)
+	{
+		throw invalid_argument("File is empty.");
+	}
+	in.seekg(0, std::ios_base::beg);
+
 	string command;
 	do {
 		getline(in, command);
@@ -215,26 +221,11 @@ void Database::readFromFile(const string& path, vector<string>& cmdHistory) {
 			cmdHistory.push_back(cp.getRaw());
 			break;
 		case PERSON:
-			addPersonRecord(cp.atToken(1), atoi(cp.atToken(2).c_str()));
+			addPersonRecord(cp.atToken(1), stoi(cp.atToken(2).c_str()));
 			cmdHistory.push_back(cp.getRaw());
 			break;
 		case ACQUIRE:
-			assignVehicleToOwner(atoi(cp.atToken(1).c_str()), cp.atToken(2));
-			cmdHistory.push_back(cp.getRaw());
-			break;
-		case RELEASE:
-			releaseVehicleOfOwner(atoi(cp.atToken(1).c_str()), cp.atToken(2));
-			cmdHistory.push_back(cp.getRaw());
-			break;
-		case REMOVE:
-			if (isStringPersonID(cp.atToken(1)))
-			{
-				deletePersonRecord(atoi(cp.atToken(1).c_str()));
-			}
-			else
-			{
-				deleteVehicleRecord(cp.atToken(1));
-			}
+			assignVehicleToOwner(stoi(cp.atToken(1).c_str()), cp.atToken(2));
 			cmdHistory.push_back(cp.getRaw());
 			break;
 		default:
@@ -259,7 +250,12 @@ void Database::saveToFile(const string& path, const vector<string>& cmdHistory) 
 
 	for (size_t i = 0; i < cmdHistory.size(); i++)
 	{
-		out << cmdHistory[i] << endl;
+		out << cmdHistory[i];
+
+		if (i != cmdHistory.size() - 1)
+		{
+			out << endl;
+		}
 	}
 
 	out.close();
@@ -300,19 +296,22 @@ void Database::exe() {
 		}
 	}
 
+	cout << "Initiate database inputing..." << endl;
 	cin.ignore();
-	do
+	while (true)
 	{
+		string cmd;
 		cp.clearCmd();
+		cout << ">";
 		cp.readCmd();
 		cp.tokenizeInnerString();
-		cp.cmdToUpper();
-
-		if (cp.size() == 0 || cp.size() > 3)
+		if (cp.getRaw().size() == 0 || cp.size() == 0 || cp.size() > 3)
 		{
 			cout << red << "Invalid command." << reset << endl;
 			continue;
 		}
+		cp.cmdToUpper();
+		cmd = cp.atToken(0);
 
 		switch (cp.getCommandType())
 		{
@@ -338,13 +337,13 @@ void Database::exe() {
 		case PERSON:
 			try
 			{
-				if (atoi(cp.atToken(2).c_str()) == 0)
+				if (stoi(cp.atToken(2).c_str()) == 0)
 				{
 					cout << red << "Invalid person id." << reset << endl;
 					break;
 				}
 
-				addPersonRecord(cp.atToken(1), atoi(cp.atToken(2).c_str()));
+				addPersonRecord(cp.atToken(1), stoi(cp.atToken(2).c_str()));
 			}
 			catch (const invalid_argument& e)
 			{
@@ -363,7 +362,7 @@ void Database::exe() {
 		case ACQUIRE:
 			try
 			{
-				assignVehicleToOwner(atoi(cp.atToken(1).c_str()), cp.atToken(2));
+				assignVehicleToOwner(stoi(cp.atToken(1).c_str()), cp.atToken(2));
 			}
 			catch (const invalid_argument& e)
 			{
@@ -382,7 +381,7 @@ void Database::exe() {
 		case RELEASE:
 			try
 			{
-				releaseVehicleOfOwner(atoi(cp.atToken(1).c_str()), cp.atToken(2));
+				releaseVehicleOfOwner(stoi(cp.atToken(1).c_str()), cp.atToken(2));
 			}
 			catch (const invalid_argument& e)
 			{
@@ -396,33 +395,40 @@ void Database::exe() {
 			}
 
 			cout << green << "Person with id " << cp.atToken(1) << " no longer owns vehicle with id " << cp.atToken(2) << reset << endl;
-			commandsHistory.push_back(cp.getRaw());
+			for (size_t i = 0; i < commandsHistory.size(); i++)
+			{
+				CommandParser cmdPar(commandsHistory[i]);
+				if (cmdPar.atToken(0) == "ACQUIRE" && cmdPar.atToken(1) == cp.atToken(1) && cmdPar.atToken(2) == cp.atToken(2))
+				{
+					commandsHistory.erase(commandsHistory.begin() + i);
+				}
+			}
 			break;
 		case REMOVE:
 			try
 			{
 				if (isStringPersonID(cp.atToken(1)))
 				{
-					Person* p = findPersonById(atoi(cp.atToken(1).c_str()));
+					Person* p = findPersonById(stoi(cp.atToken(1).c_str()));
 					if (p != nullptr)
 					{
 						if (p->getRegistrationsCount() != 0)
 						{
 							char answer;
-							cout << "Are you sure you want to delete this record?(y/n) ";
+							cout << "Are you sure you want to delete this record? \"y\" for yes and \"n\" for no: ";
 							cin >> answer;
 							if (answer == 'y')
 							{
-								deletePersonRecord(atoi(cp.atToken(1).c_str()));
+								deletePersonRecord(stoi(cp.atToken(1).c_str()));
 							}
 							else
 							{
-								break;
+								continue;
 							}
 						}
 						else
 						{
-							deletePersonRecord(atoi(cp.atToken(1).c_str()));
+							deletePersonRecord(stoi(cp.atToken(1).c_str()));
 						}
 					}
 					else
@@ -439,11 +445,15 @@ void Database::exe() {
 						if (v->getOwnerID() != 0)
 						{
 							char answer;
-							cout << "Are you sure you want to delete this record?(y/n) ";
+							cout << "Are you sure you want to delete this record? \"y\" for yes and \"n\" for no: ";
 							cin >> answer;
 							if (answer == 'y')
 							{
 								deleteVehicleRecord(v->getRegistration());
+							}
+							else
+							{
+								continue;
 							}
 						}
 						else
@@ -461,16 +471,27 @@ void Database::exe() {
 			catch (const invalid_argument& e)
 			{
 				cout << red << e.what() << reset << endl;
+				cin.ignore();
 				break;
 			}
 			catch (const out_of_range& e)
 			{
 				cout << red << e.what() << reset << endl;
+				cin.ignore();
 				break;
 			}
 
 			cout << green << "Successfully removed record with id " << cp.atToken(1) << reset << endl;
-			commandsHistory.push_back(cp.getRaw());
+			for (size_t i = 0; i < commandsHistory.size(); i++)
+			{
+				CommandParser cmdPar(commandsHistory[i]);
+				if (cmdPar.atToken(1) == cp.atToken(1) || cmdPar.atToken(2) == cp.atToken(1)
+					|| (cmdPar.atToken(0) == "ACQUIRE" && (cmdPar.atToken(1) == cp.atToken(1) || cmdPar.atToken(2) == cp.atToken(1))))
+				{
+					commandsHistory.erase(commandsHistory.begin() + i);
+					i--;
+				}
+			}
 			cin.ignore();
 			break;
 		case SAVE:
@@ -505,7 +526,7 @@ void Database::exe() {
 				{
 					if (isStringPersonID(cp.atToken(1)))
 					{
-						Person* p = findPersonById(atoi(cp.atToken(1).c_str()));
+						Person* p = findPersonById(stoi(cp.atToken(1).c_str()));
 						if (p == nullptr)
 						{
 							cout << red << "There is no record with such ID." << reset << endl;
@@ -539,9 +560,9 @@ void Database::exe() {
 			}
 			break;
 		case EXIT:
-			break;
+			return;
 		default:
 			break;
 		}
-	} while (cp.atToken(0) != "EXIT");
+	}
 }

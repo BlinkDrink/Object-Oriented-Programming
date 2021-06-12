@@ -1,5 +1,8 @@
-VeHicle X1234BB Audi
-PerSon Petko 100
-VeHiCLE X4333BB Audi
-Acquire 100 X1234BB
-REMOVE X4333BB
+Vehicle B1234AA Opel
+Vehicle X1234BB Audi
+person petko 100
+person deqn 200
+acquire 100 X1234BB
+acquire 100 B1234AA
+acquire 200 X1234BB
+acquire 200 B1234AA
