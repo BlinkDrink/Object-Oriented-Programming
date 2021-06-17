@@ -17,7 +17,7 @@ void IntegerType::print() const
 	cout << m_value;
 }
 
-IntegerType* IntegerType::clone() const
+CellType* IntegerType::clone() const
 {
 	return new IntegerType(*this);
 }

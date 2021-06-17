@@ -69,7 +69,7 @@ void CommandParser::tokenizeInnerString()
 		else
 		{
 			tokensWordInd = i;
-			while (isalpha(raw[i]) | isdigit(raw[i]) || raw[i] == '.' || raw[i] == '\\' || raw[i] == '/')
+			while (isalpha(raw[i]) | isdigit(raw[i]) || raw[i] == '.' || raw[i] == '\\' || raw[i] == '/' || raw[i] == '+' || raw[i] == '-')
 			{
 				i++;
 			}

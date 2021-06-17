@@ -3,7 +3,7 @@
 
 using std::string;
 
-/*
+/**
 *	@brief Abstract class, used for interface purposes only
 */
 class CellType

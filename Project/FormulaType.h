@@ -74,7 +74,7 @@ public:
 	*
 	*	@returns The newly allocated FormulaType* object
 	*/
-	virtual FormulaType* clone() const final override;
+	virtual CellType* clone() const final override;
 
 	/**
 	 * @brief Creates m_value string fit for file format

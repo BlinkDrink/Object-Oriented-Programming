@@ -22,7 +22,7 @@ double DoubleType::toDouble() const
 	return m_value;
 }
 
-DoubleType* DoubleType::clone() const
+CellType* DoubleType::clone() const
 {
 	return new DoubleType(*this);
 }

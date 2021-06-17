@@ -28,7 +28,7 @@ public:
 	*
 	*	@returns The newly allocated StringType* object
 	*/
-	virtual StringType* clone() const final override;
+	virtual CellType* clone() const final override;
 
 	/**
 	 * @brief Creates string fit for file

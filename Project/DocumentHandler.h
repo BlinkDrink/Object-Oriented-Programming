@@ -3,8 +3,6 @@
 #include <string>
 #include "Table.h"
 
-using std::ifstream;
-using std::ofstream;
 using std::fstream;
 using std::string;
 
@@ -93,13 +91,6 @@ public:
 	*	@param content - content with which it will be edited
 	*/
 	void editFile(size_t row, size_t col, const string& content);
-
-	/**
-	*	@brief Checks if the current document is linked to any file
-	*
-	*	@returns true if linked, false otherwise
-	*/
-	bool isDocumentLinkedToFile() const;
 
 	/**
 	*	@brief Sets the cell at row|col with given content.

@@ -34,7 +34,7 @@ public:
 	*/
 	Table();
 
-	/*
+	/**
 	*	@brief Prints the table on the console
 	*/
 	void print() const;

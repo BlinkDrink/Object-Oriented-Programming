@@ -24,7 +24,7 @@ public:
 	*
 	*	@returns The newly allocated IntegerType* object
 	*/
-	virtual IntegerType* clone() const final override;
+	virtual CellType* clone() const final override;
 
 	/**
 	*	@brief Getter

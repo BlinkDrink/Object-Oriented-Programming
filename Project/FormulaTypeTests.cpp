@@ -6,20 +6,22 @@
 #include "FormulaType.h"
 #include "Table.h"
 
-TEST_CASE("IntegerType constructor", "[IntegerType]") {
-	SECTION("constructor_GivenIntegerAsString_InitializeProperly") {
+TEST_CASE("FormulaType constructor", "[FormulaType]") {
+	SECTION("constructor_GivenFormulaToCalculate_InitializeProperly") {
 		//Arrange
-		IntegerType i("1234");
+		Table t;
+		FormulaType i("=1234 + 0.0000001", t);
 
 		//Assert
-		REQUIRE(i.size() == 4);
+		REQUIRE(i.size() == 11);
 	}
 }
 
-TEST_CASE("IntegerType clone", "[clone]") {
-	SECTION("clone_OnNonEmptyInteger_CloneDynamically") {
+TEST_CASE("FormulaType clone", "[clone]") {
+	SECTION("clone_OnNonEmptyFormulaType_CloneDynamically") {
 		//Arrange
-		IntegerType i("1234");
+		Table t;
+		FormulaType i("1234", t);
 
 		CellType* g = i.clone();
 
@@ -29,30 +31,33 @@ TEST_CASE("IntegerType clone", "[clone]") {
 	}
 }
 
-TEST_CASE("IntegerType size", "[size]") {
-	SECTION("size_OnIntegerType_ReturnProperSize") {
+TEST_CASE("FormulaType size", "[size]") {
+	SECTION("size_OnFormulaType_ReturnProperSize") {
 		//Arrange
-		IntegerType i("12345");
+		Table t;
+		FormulaType i("=12345", t);
 
 		//Assert
-		REQUIRE(i.size() == 5);
+		REQUIRE(i.size() == 12);
 	}
 }
 
-TEST_CASE("IntegerType toString", "[toString]") {
-	SECTION("toString_OnIntegerType_ReturnItToString") {
+TEST_CASE("FormulaType toString", "[toString]") {
+	SECTION("toString_OnFormulaType_ReturnItToString") {
 		//Arrange
-		IntegerType i("1234");
+		Table t;
+		FormulaType i("=1234", t);
 
 		//Assert
-		REQUIRE(i.toString() == "1234");
+		REQUIRE(i.toString() == "=1234");
 	}
 }
 
-TEST_CASE("IntegerType operator+", "[operator+]") {
+TEST_CASE("FormulaType operator+", "[operator+]") {
+	Table t;
 	SECTION("operator+_WithIntegerType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		IntegerType d("7");
 
 		double res = i + d;
@@ -63,7 +68,7 @@ TEST_CASE("IntegerType operator+", "[operator+]") {
 
 	SECTION("operator+_WithDoubleType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		DoubleType d("0.14");
 
 		double res = i + d;
@@ -74,7 +79,7 @@ TEST_CASE("IntegerType operator+", "[operator+]") {
 
 	SECTION("operator+_WithStringType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		StringType d("0.14.12");
 
 		double res = i + d;
@@ -86,7 +91,7 @@ TEST_CASE("IntegerType operator+", "[operator+]") {
 	SECTION("operator+_WithFormulaType_CalculateProperly") {
 		//Arrange
 		Table t;
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		FormulaType d("=1 + 6", t);
 
 		double res = i + d;
@@ -96,10 +101,11 @@ TEST_CASE("IntegerType operator+", "[operator+]") {
 	}
 }
 
-TEST_CASE("IntegerType operator-", "[operator-]") {
+TEST_CASE("FormulaType operator-", "[operator-]") {
+	Table t;
 	SECTION("operator-_WithIntegerType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		IntegerType d("7");
 
 		double res = i - d;
@@ -110,7 +116,7 @@ TEST_CASE("IntegerType operator-", "[operator-]") {
 
 	SECTION("operator-_WithDoubleType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		DoubleType d("1");
 
 		double res = i - d;
@@ -121,7 +127,7 @@ TEST_CASE("IntegerType operator-", "[operator-]") {
 
 	SECTION("operator-_WithStringType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		StringType d("0.14.12");
 
 		double res = i - d;
@@ -133,7 +139,7 @@ TEST_CASE("IntegerType operator-", "[operator-]") {
 	SECTION("operator-_WithFormulaType_CalculateProperly") {
 		//Arrange
 		Table t;
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		FormulaType d("=1 + 6", t);
 
 		double res = i - d;
@@ -143,10 +149,11 @@ TEST_CASE("IntegerType operator-", "[operator-]") {
 	}
 }
 
-TEST_CASE("IntegerType operator*", "[operator*]") {
+TEST_CASE("FormulaType operator*", "[operator*]") {
+	Table t;
 	SECTION("operator*_WithIntegerType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		IntegerType d("7");
 
 		double res = i * d;
@@ -157,7 +164,7 @@ TEST_CASE("IntegerType operator*", "[operator*]") {
 
 	SECTION("operator*_WithDoubleType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		DoubleType d("1.5");
 
 		double res = i * d;
@@ -168,7 +175,7 @@ TEST_CASE("IntegerType operator*", "[operator*]") {
 
 	SECTION("operator*_WithStringType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		StringType d("0.14.12");
 
 		double res = i * d;
@@ -180,7 +187,7 @@ TEST_CASE("IntegerType operator*", "[operator*]") {
 	SECTION("operator*_WithFormulaType_CalculateProperly") {
 		//Arrange
 		Table t;
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		FormulaType d("=1 + 6", t);
 
 		double res = i * d;
@@ -190,10 +197,11 @@ TEST_CASE("IntegerType operator*", "[operator*]") {
 	}
 }
 
-TEST_CASE("IntegerType operator/", "[operator/]") {
+TEST_CASE("FormulaType operator/", "[operator/]") {
+	Table t;
 	SECTION("operator/_WithIntegerType_CalculateProperly") {
 		//Arrange
-		IntegerType i("77");
+		FormulaType i("=77", t);
 		IntegerType d("7");
 
 		double res = i / d;
@@ -204,7 +212,7 @@ TEST_CASE("IntegerType operator/", "[operator/]") {
 
 	SECTION("operator/_WithDoubleType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		DoubleType d("1.5");
 
 		double res = i / d;
@@ -215,7 +223,7 @@ TEST_CASE("IntegerType operator/", "[operator/]") {
 
 	SECTION("operator/_WithStringType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		FormulaType i("=3", t);
 		StringType d("0.5");
 
 		double res = i / d;
@@ -226,61 +234,73 @@ TEST_CASE("IntegerType operator/", "[operator/]") {
 
 	SECTION("operator/_WithFormulaType_CalculateProperly") {
 		//Arrange
-		Table t;
-		IntegerType i("21");
-		FormulaType d("=1 + 6", t);
+		Cell c("2", t);
+		t.setCellAt(0, 0, c);
+		FormulaType i("=A1*2 *(1+2)", t);
+		FormulaType d("=1 + 5", t);
 
 		double res = i / d;
 
 		//Assert
-		REQUIRE(res == 3);
+		REQUIRE(res == 2);
 	}
 }
 
-TEST_CASE("IntegerType operator^", "[operator^]") {
+TEST_CASE("FormulaType operator^", "[operator^]") {
+	Table t;
 	SECTION("operator^_WithIntegerType_CalculateProperly") {
 		//Arrange
-		IntegerType i("2");
+		Cell c("2", t);
+		t.setCellAt(0, 0, c);
+		FormulaType i("=A1+2", t);
 		IntegerType d("2");
 
 		double res = i ^ d;
 
 		//Assert
-		REQUIRE(res == 4);
+		REQUIRE(res == 16);
 	}
 
 	SECTION("operator^_WithDoubleType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		Cell c("2", t);
+		t.setCellAt(0, 0, c);
+		FormulaType i("=A1-2", t);
 		DoubleType d("4");
 
+		//Act
 		double res = i ^ d;
 
 		//Assert
-		REQUIRE(res == 81);
+		REQUIRE(res == 0);
 	}
 
 	SECTION("operator^_WithStringType_CalculateProperly") {
 		//Arrange
-		IntegerType i("3");
+		Cell c("2", t);
+		t.setCellAt(0, 0, c);
+		FormulaType i("=A1+2", t);
 		StringType d("0.5");
 
+		//Act
 		double res = i ^ d;
 
 		//Assert
-		REQUIRE(res == sqrt(3));
+		REQUIRE(res == 2);
 	}
 
 	SECTION("operator^_WithFormulaType_CalculateProperly") {
 		//Arrange
-		Table t;
-		IntegerType i("2");
+		Cell c("2", t);
+		t.setCellAt(0, 0, c);
+		FormulaType i("=A1+2", t);
 		FormulaType d("=2 * 3", t);
 
+		//Act
 		double res = i ^ d;
 
 		//Assert
-		REQUIRE(res == 64);
+		REQUIRE(res == 4096);
 	}
 }
 

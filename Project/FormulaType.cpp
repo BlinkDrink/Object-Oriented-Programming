@@ -170,7 +170,7 @@ void FormulaType::print() const
 	cout << to_string(calculateFormula());
 }
 
-FormulaType* FormulaType::clone() const
+CellType* FormulaType::clone() const
 {
 	return new FormulaType(*this);
 }

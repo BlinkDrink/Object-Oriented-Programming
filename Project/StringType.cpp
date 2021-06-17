@@ -16,7 +16,7 @@ void StringType::print() const
 	cout << toString();
 }
 
-StringType* StringType::clone() const
+CellType* StringType::clone() const
 {
 	return new StringType(*this);
 }

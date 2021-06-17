@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
-#include "termcolor.hpp"
+#include "termcolor.hpp" // Open-source console coloring tool
 #include "DocumentHandler.h"
 #include "StringHelper.h"
 #include "CommandParser.h"
@@ -32,6 +32,15 @@ DocumentHandler::DocumentHandler()
 
 void DocumentHandler::menu() const
 {
+	cout << "\t\t\tMENU" << endl;
+	cout << "open <path>		- opens the given file at <path>" << endl;
+	cout << "close			- closes the current file" << endl;
+	cout << "new			- creates new empty document. Can only be saved via saveas" << endl;
+	cout << "save			- saves the current opened document in the current linked file" << endl;
+	cout << "saveas <path>		- saves the current document in the file at <path>" << endl;
+	cout << "edit <address> <value>	- edits the desired cell at <address> with desired <value>" << endl;
+	cout << "print			- prints the contents of the table on the console" << endl;
+	cout << "exit			- exits the program" << endl;
 }
 
 DocumentHandler& DocumentHandler::getInstance()
@@ -129,7 +138,7 @@ void DocumentHandler::saveToFile()
 		throw invalid_argument("Cannot save - no document loaded");
 	}
 
-	m_file.open(m_filePath);
+	m_file.open(m_filePath, std::ios_base::out);
 
 	for (size_t i = 0; i < m_table.getRows(); i++)
 	{
@@ -197,16 +206,6 @@ void DocumentHandler::alterCell(size_t row, size_t col, const string& content)
 	Cell c(content, m_table);
 
 	m_table.setCellAt(row, col, c);
-}
-
-bool DocumentHandler::isDocumentLinkedToFile() const
-{
-	if (!m_file.is_open())
-	{
-		return false;
-	}
-
-	return true;
 }
 
 void DocumentHandler::initializeEmptyTableFromFile()
@@ -441,7 +440,7 @@ void DocumentHandler::exe()
 		case CommandType::EXIT:
 			try
 			{
-				if (isDocumentLinkedToFile())
+				if (!m_isClosed)
 				{
 					if (!closeFile())
 						break;

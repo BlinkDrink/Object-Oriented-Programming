@@ -10,6 +10,7 @@ using std::cout;
 using std::invalid_argument;
 using sh = StringHelper;
 
+//TODO: Refactor
 Cell::Cell(const string& content, const Table& ref)
 {
 	if (sh::isStringInteger(content))
@@ -61,6 +62,11 @@ void Cell::copyFrom(const Cell& other)
 		m_content = nullptr;
 }
 
+void Cell::moveFrom(Cell& other) {
+	m_content = other.m_content;
+	other.m_content = nullptr;
+}
+
 Cell::Cell(const Cell& other)
 {
 	copyFrom(other);
@@ -79,8 +85,7 @@ Cell& Cell::operator=(const Cell& other)
 
 Cell::Cell(Cell&& other) noexcept
 {
-	m_content = other.m_content;
-	other.m_content = nullptr;
+	moveFrom(other);
 }
 
 Cell& Cell::operator=(Cell&& other) noexcept
@@ -88,8 +93,7 @@ Cell& Cell::operator=(Cell&& other) noexcept
 	if (this != &other)
 	{
 		delete m_content;
-		m_content = other.m_content;
-		other.m_content = nullptr;
+		moveFrom(other);
 	}
 
 	return *this;
